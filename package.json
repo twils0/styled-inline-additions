@@ -1,7 +1,7 @@
 {
   "name": "styled-inline-additions",
   "version": "0.1.0",
-  "description": "a styled-components helper that translates an inline styles object into a string of css",
+  "description": "styled-components helper that converts inline styles into a string of css",
   "main": "app/index.jsx",
   "scripts": {
     "webpack": "webpack --progress --colors --mode production",
@@ -13,7 +13,7 @@
     "verbose": true,
     "testEnvironment": "jsdom",
     "roots": [
-      "<rootDir>/app/src"
+      "<rootDir>"
     ],
     "modulePaths": [
       "<rootDir>/node_modules"

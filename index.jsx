@@ -1,29 +1,29 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import styled from 'styled-components';
-import { PhotoshopPicker } from 'react-color';
-
 import inlineConvert from './inlineConvert';
 
-const inlineAdditions = (...args) => {
-  let styleString = '';
+const inlineAdditions = ({ addString, addObject }) => {
+  let finalStyleString = '';
 
-  args.forEach(arg => {
-    Object.keys(arg).forEach(key => {
-      switch (key) {
-        case 'addString':
-          if (typeof arg.inlineString === 'string') {
-            styleString += '\n' + arg.inlineString + '\n';
-          }
-          break;
-        case 'addObject':
-          styleString += '\n' + inlineConvert(arg.inlineConvert) + '\n';
-          break;
-        default:
-          break;
-      }
-    });
-  });
+  if (addString && typeof addString === 'string') {
+    finalStyleString += `\n${addString}\n`;
+  } else {
+    console.error('inlineAdditions - please provide a string for addString');
+  }
 
-  return styleString;
+  if (addObject && typeof addObject === 'object' && addObject.constructor !== Array) {
+    const { styleString, failedStyles } = inlineConvert(addObject);
+    finalStyleString += `\n${styleString}\n`;
+
+    if (failedStyles.length > 0) {
+      console.error(
+        'inlineAdditions - an error occured when processing each of the following styles: \n',
+        failedStyles,
+      );
+    }
+  } else {
+    console.error('inlineAdditions - please provide an object (arrays do not count) for addObject');
+  }
+
+  return finalStyleString;
 };
+
+export default inlineAdditions;

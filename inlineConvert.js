@@ -4,22 +4,20 @@ import handleAdd from './handleAdd';
 
 import { cssCategories } from './Categories/categories';
 
-const inlineConvert = styles => {
+const inlineConvert = (styles) => {
   let returnStyleString = '';
   let returnParamString = '';
   let returnHtmlString = '';
   let returnMediaString = '';
+  const returnFailedStyles = [];
 
   if (styles && typeof styles === 'object' && styles.constructor !== Array) {
-    Object.keys(styles).forEach(key => {
+    Object.keys(styles).forEach((key) => {
+      const style = styles[key];
       const cleanedKey = key.replace(/[^A-Za-z0-9]/g, '');
-      const style = styles[cleanedKey];
       const category = cssCategories[cleanedKey];
 
       if (typeof style === 'string') {
-        const cleanedStyle = style.replace(/[^A-Za-z0-9]/g, '');
-        const formattedKey = stringifyType(category, camelToDash(cleanedKey));
-
         if (cleanedKey === 'add') {
           const { htmlString, paramString, mediaString } = handleAdd(style);
 
@@ -32,29 +30,28 @@ const inlineConvert = styles => {
           if (mediaString) {
             returnMediaString = mediaString;
           }
-        }
+        } else {
+          const cleanedStyle = style.replace(/[^A-Za-z0-9- ]/g, '');
+          const formattedKey = stringifyType(category, camelToDash(cleanedKey));
 
-        returnStyleString += `${formattedKey}: ${cleanedStyle};\n`;
+          returnStyleString += `${formattedKey}: ${cleanedStyle};\n`;
+        }
       } else if (typeof style === 'object') {
         if (style.constructor !== Array) {
           switch (category) {
             case 'htmlElement': {
               const { styleString, htmlString } = inlineConvert(style);
 
-              returnStyleString += `${htmlString ? `${cleanedKey}, ${htmlString}` : cleanedKey} {
-                ${styleString}
-              }
-            `;
+              returnStyleString += `${
+                htmlString ? `${cleanedKey}, ${htmlString}` : cleanedKey
+              } {\n${styleString}}\n`;
               break;
             }
             case 'pseudoClass' || 'pseudoElement' || 'pseudoElementDash': {
               const { styleString, htmlString } = inlineConvert(style);
               const formattedKey = stringifyType(category, camelToDash(cleanedKey));
 
-              returnStyleString += `${htmlString || '&'}${formattedKey} {
-                ${styleString}
-              }
-            `;
+              returnStyleString += `${htmlString || '&'}${formattedKey} {\n${styleString}\n}\n`;
               break;
             }
             case 'pseudoClassParam' || 'pseudoElementParam': {
@@ -73,12 +70,9 @@ const inlineConvert = styles => {
                 }
               }
 
-              returnStyleString += `${filteredHtml || '&'}$${formattedKey}${
+              returnStyleString += `${filteredHtml || '&'}${formattedKey}${
                 paramString ? `(${paramString})` : ''
-              } {
-                  ${styleString}
-                }
-              `;
+              } {\n${styleString}}\n`;
               break;
             }
             case 'mediaQuery': {
@@ -95,22 +89,20 @@ const inlineConvert = styles => {
               break;
             }
             default:
-              return cleanedKey;
+              returnFailedStyles.push(cleanedKey);
               break;
           }
-        } else {
-          if (cleanedKey === 'add') {
-            const { htmlString, paramString, mediaString } = handleAdd(style);
+        } else if (cleanedKey === 'add') {
+          const { htmlString, paramString, mediaString } = handleAdd(style);
 
-            if (htmlString) {
-              returnHtmlString = htmlString;
-            }
-            if (paramString) {
-              returnParamString = paramString;
-            }
-            if (mediaString) {
-              returnMediaString = mediaString;
-            }
+          if (htmlString) {
+            returnHtmlString = htmlString;
+          }
+          if (paramString) {
+            returnParamString = paramString;
+          }
+          if (mediaString) {
+            returnMediaString = mediaString;
           }
         }
       }
@@ -122,6 +114,7 @@ const inlineConvert = styles => {
     htmlString: returnHtmlString,
     mediaString: returnMediaString,
     styleString: returnStyleString,
+    failedStyles: returnFailedStyles,
   };
 };
 
