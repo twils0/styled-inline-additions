@@ -3,18 +3,16 @@ import { pseudoClasses, pseudoClassesParam } from './pseudoClasses';
 import { pseudoElements, pseudoElementsParam, pseudoElementsDash } from './pseudoElements';
 import { mediaTypes, mediaFeatures } from './mediaTypesFeatures';
 
-export const cssCategories = {
+const cssCategories = {
   ...htmlElements,
   ...pseudoClasses,
   ...pseudoClassesParam,
   ...pseudoElements,
   ...pseudoElementsParam,
   ...pseudoElementsDash,
+  ...mediaTypes,
+  ...mediaFeatures,
   media: 'mediaQuery',
 };
 
-export const htmlMediaCategories = {
-  ...htmlElements,
-  ...mediaTypes,
-  ...mediaFeatures,
-};
+export default cssCategories;

@@ -1,14 +1,27 @@
 import camelToDash from './camelToDash';
 
-import { htmlMediaCategories } from './Categories/categories';
+import cssCategories from './Categories/categories';
+import { mediaFeaturesExceptions } from './Categories/mediaTypesFeatures';
+import stringifyCategory from './stringifyCategory';
 
-const handleAdd = (styles) => {
+const handleAdd = (styles, paramNeeded) => {
   let stylesArray = null;
-  let htmlString = '';
+  let htmlPseudoString = '';
   let mediaString = '';
   let paramString = '';
   const failedStyles = [];
   let stylesString = '';
+  const htmlPseudoCategories = [
+    'htmlElement',
+    'pseudoClass',
+    'pseudoElement',
+    'pseudoClassDash',
+    'pseudoElementDash',
+    'pseudoClassParam',
+    'pseudoElementParam',
+  ];
+  const mediaCategories = ['mediaType', 'mediaFeature'];
+  let paramIndex = paramNeeded ? 0 : -1;
 
   if (typeof styles === 'string') {
     stylesString = styles;
@@ -16,11 +29,14 @@ const handleAdd = (styles) => {
     stylesString = JSON.stringify(styles);
   }
 
+  console.log('1 add', styles, paramNeeded);
+
   stylesArray = stylesString
-    .replace(/[^A-Za-z0-9,>&|!*:-]/g, '')
-    .replace(/([,>&|!*:-]+[,>&|!*:-]+)/g, (match) => {
-      const first = match[0];
-      const last = match.slice(-1);
+    .replace(/[^A-Za-z0-9 ,>&|!*:-]/g, '')
+    .replace(/([\s,>&|!*:-]+[\s,>&|!*:-]+)/g, (match) => {
+      const cleanedMatch = match.replace(/\s/g, '');
+      const first = cleanedMatch[0];
+      const last = cleanedMatch.slice(-1);
 
       if (first === last) {
         if (first === '&' || first === '|') {
@@ -31,73 +47,107 @@ const handleAdd = (styles) => {
       return `${first}${last}`;
     })
     .split(/([,>&|!*:-])/g)
-    .filter(value => value);
+    .map(style => style && style.replace(/(^\s+)|(\s+$)/g, ''))
+    .filter(style => style);
 
-  console.log('styles array', stylesArray);
+  console.log('2 add', stylesArray);
 
   for (let i = 0; i < stylesArray.length; i += 1) {
     const style = stylesArray[i];
-    const prevStyle = stylesArray[i - 1];
     const nextStyle = stylesArray[i + 1];
-    const prevType = htmlMediaCategories[prevStyle];
-    const nextType = htmlMediaCategories[nextStyle];
+    const nextNextStyle = stylesArray[i + 2];
+    const category = cssCategories[style];
+    const nextCategory = cssCategories[nextStyle];
+    const nextNextCategory = cssCategories[nextNextStyle];
+    const charTest = /[,>&|!*:]/g.test(style);
+    const nextCharTest = /[,>&|!*:]/g.test(nextStyle);
 
-    if (style.length === 1) {
+    if (paramIndex > -1) {
+      console.log(
+        'param',
+        paramIndex > -1,
+        'style',
+        style !== ',',
+        'cat',
+        category !== 'htmlElement',
+        'char cat',
+        charTest,
+        category,
+        i,
+        stylesArray.length - 1,
+      );
+    }
+
+    if (
+      paramIndex > -1
+      && (style !== ','
+        && category !== 'htmlElement'
+        && (charTest || category || i === stylesArray.length - 1))
+    ) {
+      if (i === stylesArray.length - 1) {
+        htmlPseudoString += `${
+          htmlPseudoString && paramIndex < htmlPseudoString.length ? ', ' : ''
+        }${style}`;
+      }
+
+      if (paramNeeded) {
+        if (htmlPseudoString.slice(0, 2) === ', ') {
+          paramString = htmlPseudoString.slice(2);
+        } else {
+          paramString = htmlPseudoString;
+        }
+
+        htmlPseudoString = '';
+      } else {
+        console.log('p ind', htmlPseudoString, paramIndex);
+
+        htmlPseudoString = `${htmlPseudoString.slice(0, paramIndex)}(${htmlPseudoString.slice(
+          paramIndex,
+        )})`;
+      }
+
+      console.log('***', paramString, '***', htmlPseudoString);
+
+      paramIndex = -1;
+    }
+
+    if (charTest) {
       switch (style) {
         case ',': {
-          const prevPrevStyle = stylesArray[i - 2];
-          const nextNextStyle = stylesArray[i + 2];
-          const prevPrevType = htmlMediaCategories[prevPrevStyle];
-          const nextNextType = htmlMediaCategories[nextNextStyle];
+          const nextHtmlPseudo = htmlPseudoCategories.indexOf(nextCategory) > -1;
+          const nextNextHtmlPseudo = htmlPseudoCategories.indexOf(nextNextCategory) > -1;
+          const nextMedia = mediaCategories.indexOf(nextCategory) > -1;
+          const nextNextMedia = mediaCategories.indexOf(nextNextCategory) > -1;
 
-          if (
-            prevType === 'htmlElement'
-            && (nextType === 'htmlElement'
-              || (nextStyle.length === 1 && nextNextType === 'htmlElement'))
-          ) {
-            if (nextStyle.length === 1 && !nextType) {
-              htmlString += `, ${nextNextStyle}`;
+          if (nextHtmlPseudo || (nextCharTest && nextNextHtmlPseudo)) {
+            if (nextCharTest) {
+              htmlPseudoString += `, ${nextNextStyle}`;
               i += 2;
             } else {
-              htmlString += `, ${nextStyle}`;
+              htmlPseudoString += `, ${nextStyle}`;
               i += 1;
             }
-          } else if (
-            (prevType === 'mediaType'
-              || prevType === 'mediaFeature'
-              || prevPrevType === 'mediaType'
-              || prevPrevType === 'mediaFeature')
-            && (nextType === 'mediaType'
-              || nextType === 'mediaFeature'
-              || (nextStyle.length === 1
-                && (nextNextType === 'mediaType' || nextNextType === 'mediaFeature')))
-          ) {
-            if (nextStyle.length === 1) {
-              mediaString += `, ${nextNextStyle}`;
-              i += 2;
-            } else {
-              mediaString += `, ${nextStyle}`;
+          } else if (nextMedia || (nextCharTest && nextNextMedia)) {
+            if (nextCharTest && nextStyle !== '!' && nextStyle !== '*') {
               i += 1;
             }
+
+            mediaString += ',';
           } else {
-            failedStyles.concat(style);
+            failedStyles.push(style);
           }
           break;
         }
         case '>': {
-          const nextNextStyle = stylesArray[i + 2];
-          const nextNextType = htmlMediaCategories[nextNextStyle];
+          const nextHtmlPseudo = htmlPseudoCategories.indexOf(nextCategory) > -1;
+          const nextNextHtmlPseudo = htmlPseudoCategories.indexOf(nextNextCategory) > -1;
 
-          if (
-            prevType === 'htmlElement'
-            && (nextType === 'htmlElement'
-              || (nextStyle.length === 1 && nextNextType === 'htmlElement'))
-          ) {
-            if (nextStyle.length === 1 && !nextType) {
-              htmlString += ` > ${nextNextStyle}`;
+          if (nextHtmlPseudo || (nextCharTest && nextNextHtmlPseudo)) {
+            if (nextCharTest) {
+              htmlPseudoString += ` > ${nextNextStyle}`;
               i += 2;
             } else {
-              htmlString += ` > ${nextStyle}`;
+              htmlPseudoString += ` > ${nextStyle}`;
               i += 1;
             }
           } else {
@@ -106,26 +156,14 @@ const handleAdd = (styles) => {
           break;
         }
         case '&': {
-          const prevPrevStyle = stylesArray[i - 2];
-          const nextNextStyle = stylesArray[i + 2];
-          const prevPrevType = htmlMediaCategories[prevPrevStyle];
-          const nextNextType = htmlMediaCategories[nextNextStyle];
+          const nextMedia = mediaCategories.indexOf(nextCategory) > -1;
+          const nextNextMedia = mediaCategories.indexOf(nextNextCategory) > -1;
 
-          if (
-            (prevType === 'mediaType'
-              || prevType === 'mediaFeature'
-              || prevPrevType === 'mediaType'
-              || prevPrevType === 'mediaFeature')
-            && (nextType === 'mediaType'
-              || nextType === 'mediaFeature'
-              || (nextStyle.length === 1
-                && (nextNextType === 'mediaType' || nextNextType === 'mediaFeature')))
-          ) {
-            if (nextStyle.length === 1 && !nextType) {
-              i += 2;
-            } else {
+          if (nextMedia || (nextCharTest && nextNextMedia)) {
+            if (nextCharTest && nextStyle !== '!' && nextStyle !== '*') {
               i += 1;
             }
+
             mediaString += ' and';
           } else {
             failedStyles.push(style);
@@ -133,26 +171,14 @@ const handleAdd = (styles) => {
           break;
         }
         case '|': {
-          const prevPrevStyle = stylesArray[i - 2];
-          const nextNextStyle = stylesArray[i + 2];
-          const prevPrevType = htmlMediaCategories[prevPrevStyle];
-          const nextNextType = htmlMediaCategories[nextNextStyle];
+          const nextMedia = mediaCategories.indexOf(nextCategory) > -1;
+          const nextNextMedia = mediaCategories.indexOf(nextNextCategory) > -1;
 
-          if (
-            (prevType === 'mediaType'
-              || prevType === 'mediaFeature'
-              || prevPrevType === 'mediaType'
-              || prevPrevType === 'mediaFeature')
-            && (nextType === 'mediaType'
-              || nextType === 'mediaFeature'
-              || (nextStyle.length === 1
-                && (nextNextType === 'mediaType' || nextNextType === 'mediaFeature')))
-          ) {
-            if (nextStyle.length === 1 && !nextType) {
-              i += 2;
-            } else {
+          if (nextMedia || (nextCharTest && nextNextMedia)) {
+            if (nextCharTest) {
               i += 1;
             }
+
             mediaString += ',';
           } else {
             failedStyles.push(style);
@@ -160,83 +186,80 @@ const handleAdd = (styles) => {
           break;
         }
         case '!': {
-          const nextNextStyle = stylesArray[i + 2];
-          const nextNextType = htmlMediaCategories[nextNextStyle];
+          const nextMedia = mediaCategories.indexOf(nextCategory) > -1;
+          const nextNextMedia = mediaCategories.indexOf(nextNextCategory) > -1;
 
-          if (
-            nextType === 'mediaType'
-            || nextType === 'mediaFeature'
-            || (nextStyle.length === 1
-              && (nextNextType === 'mediaType' || nextNextType === 'mediaFeature'))
-          ) {
-            mediaString += ' not';
+          if (nextMedia || (nextCharTest && nextNextMedia)) {
+            if (nextCharTest) {
+              i += 1;
+            }
+
+            mediaString += `${mediaString ? ' ' : ''}not`;
           } else {
             failedStyles.push(style);
           }
           break;
         }
         case '*': {
-          const nextNextStyle = stylesArray[i + 2];
-          const nextNextType = htmlMediaCategories[nextNextStyle];
+          const nextMedia = mediaCategories.indexOf(nextCategory) > -1;
+          const nextNextMedia = mediaCategories.indexOf(nextNextCategory) > -1;
 
-          if (
-            nextType === 'mediaType'
-            || nextType === 'mediaFeature'
-            || (nextStyle.length === 1
-              && (nextNextType === 'mediaType' || nextNextType === 'mediaFeature'))
-          ) {
-            mediaString += ' only';
+          if (nextMedia || (nextCharTest && nextNextMedia)) {
+            if (nextCharTest) {
+              i += 1;
+            }
+
+            mediaString += `${mediaString ? ' ' : ''}only`;
           } else {
             failedStyles.push(style);
           }
           break;
         }
-        default: {
-          const prevPrevStyle = stylesArray[i - 2];
-          const nextNextStyle = stylesArray[i + 2];
-          const prevPrevType = htmlMediaCategories[prevPrevStyle];
-          const nextNextType = htmlMediaCategories[nextNextStyle];
+        case ':': {
+          const nextHtmlPseudo = htmlPseudoCategories.indexOf(nextCategory) > -1;
+          const nextNextHtmlPseudo = htmlPseudoCategories.indexOf(nextNextCategory) > -1;
 
-          if (prevType === 'htmlElement' && nextStyle === ',' && nextNextType === 'htmlElement') {
-            htmlString += `, ${nextNextStyle}`;
+          if (nextHtmlPseudo || (nextCharTest && nextNextHtmlPseudo)) {
+            if (nextCharTest) {
+              htmlPseudoString += `:${nextNextStyle}`;
+              i += 2;
+            } else {
+              htmlPseudoString += `:${nextStyle}`;
+              i += 1;
+            }
+          } else {
+            failedStyles.concat(style);
+          }
+          break;
+        }
+        default: {
+          const nextNextHtmlPseudo = htmlPseudoCategories.indexOf(nextNextCategory) > -1;
+          const nextNextMedia = mediaCategories.indexOf(nextNextCategory) > -1;
+
+          if (nextStyle === ',' && nextNextHtmlPseudo) {
+            htmlPseudoString += `, ${nextNextStyle}`;
             i += 2;
-          } else if (
-            prevType === 'htmlElement'
-            && nextStyle === '>'
-            && nextNextType === 'htmlElement'
-          ) {
-            htmlString += ` > ${nextNextStyle}`;
+          } else if (nextStyle === '>' && nextNextHtmlPseudo) {
+            htmlPseudoString += ` > ${nextNextStyle}`;
             i += 2;
-          } else if (
-            (prevType === 'mediaType'
-              || prevType === 'mediaFeature'
-              || prevPrevType === 'mediaType'
-              || prevPrevType === 'mediaFeature')
-            && nextStyle === '&'
-            && (nextNextType === 'mediaType' || nextNextType === 'mediaFeature')
-          ) {
-            mediaString += ' and';
-            i += 2;
-          } else if (
-            (prevType === 'mediaType'
-              || prevType === 'mediaFeature'
-              || prevPrevType === 'mediaType'
-              || prevPrevType === 'mediaFeature')
-            && nextStyle === '|'
-            && (nextNextType === 'mediaType' || nextNextType === 'mediaFeature')
-          ) {
+          } else if (nextStyle === ',' && nextNextMedia) {
             mediaString += ',';
+            i += 1;
+          } else if (nextStyle === '&' && nextNextMedia) {
+            mediaString += ' and';
+            i += 1;
+          } else if (nextStyle === '|' && nextNextMedia) {
+            mediaString += ',';
+            i += 1;
+          } else if (nextStyle === '!' && nextNextMedia) {
+            mediaString += `${mediaString ? ' ' : ''}not`;
+            i += 1;
+          } else if (nextStyle === '*' && nextNextMedia) {
+            mediaString += `${mediaString ? ' ' : ''}only`;
+            i += 1;
+          } else if (nextStyle === ':' && nextNextHtmlPseudo) {
+            htmlPseudoString += `:${nextNextStyle}`;
             i += 2;
-          } else if (
-            nextStyle === '!'
-            && (nextNextType === 'mediaType' || nextNextType === 'mediaFeature')
-          ) {
-            mediaString += ' not';
-          } else if (
-            nextStyle === '*'
-            && (nextNextType === 'mediaType' || nextNextType === 'mediaFeature')
-          ) {
-            mediaString += ' only';
           } else {
             failedStyles.push(style);
           }
@@ -244,57 +267,75 @@ const handleAdd = (styles) => {
         }
       }
     } else {
-      const type = htmlMediaCategories[style];
+      switch (category) {
+        case 'htmlElement':
+        case 'pseudoClass':
+        case 'pseudoElement':
+        case 'pseudoClassDash':
+        case 'pseudoElementDash': {
+          const formattedStyle = stringifyCategory(category, camelToDash(style));
 
-      switch (type) {
-        case 'htmlElement': {
-          // all html styles are handled by the , and > cases above, except the first,
-          // which is handled below
-          htmlString += `${style}`;
+          htmlPseudoString += formattedStyle;
           break;
         }
-        case 'mediaTypes': {
-          const nextNextStyle = stylesArray[i + 2];
-          const nextNextType = htmlMediaCategories[nextNextStyle];
-          const formattedStyle = camelToDash(style);
+        case 'pseudoClassParam':
+        case 'pseudoElementParam': {
+          const formattedStyle = stringifyCategory(category, camelToDash(style));
 
-          if (nextStyle === ':' && (nextNextStyle.length > 1 || !nextNextType)) {
-            const formattedNextNextStyle = camelToDash(nextNextStyle);
+          htmlPseudoString += formattedStyle;
+
+          paramIndex = htmlPseudoString.length;
+          break;
+        }
+        case 'mediaType': {
+          const formattedStyle = stringifyCategory(category, camelToDash(style));
+
+          mediaString += `${mediaString ? ' ' : ''}${formattedStyle}`;
+          break;
+        }
+        case 'mediaFeature': {
+          const formattedStyle = stringifyCategory(category, camelToDash(style));
+          const nextNextCharTest = /[,>&|!*:]/g.test(nextNextStyle);
+          const nextException = mediaFeaturesExceptions[nextStyle];
+          const nextNextException = mediaFeaturesExceptions[nextNextStyle];
+
+          if (
+            nextStyle === ':'
+            && (nextNextStyle && !nextNextCharTest && (!nextNextCategory || nextNextException))
+          ) {
+            const formattedNextNextStyle = stringifyCategory(category, camelToDash(nextNextStyle));
 
             mediaString += `${
-              mediaString.length > 1 ? ' ' : ''
+              mediaString ? ' ' : ''
             }(${formattedStyle}: ${formattedNextNextStyle})`;
             i += 2;
-          } else if (nextStyle.length > 1 || !nextType) {
-            const formattedNextStyle = camelToDash(nextNextStyle);
+          } else if (nextStyle && !nextCharTest && (!nextCategory || nextException)) {
+            const formattedNextStyle = stringifyCategory(category, camelToDash(nextStyle));
 
-            mediaString += `${
-              mediaString.length > 1 ? ' ' : ''
-            }(${formattedStyle}: ${formattedNextStyle})`;
+            mediaString += `${mediaString ? ' ' : ''}(${formattedStyle}: ${formattedNextStyle})`;
           } else {
-            mediaString += `${mediaString.length > 1 ? ' ' : ''}(${formattedStyle})`;
+            mediaString += `${mediaString ? ' ' : ''}(${formattedStyle})`;
           }
           break;
         }
-        case 'mediaFeatures': {
-          mediaString += `${mediaString.length > 1 ? ' ' : ''}${camelToDash(style)}`;
-          break;
-        }
         default: {
-          // assumed to be a param
-          paramString += style;
+          if (paramIndex > -1) {
+            htmlPseudoString += style;
+          } else {
+            failedStyles.push(style);
+          }
           break;
         }
       }
     }
   }
 
-  console.log(htmlString);
+  console.log('3 add', paramString);
 
   return {
-    htmlString,
-    paramString,
+    htmlPseudoString,
     mediaString,
+    paramString,
     failedStyles,
   };
 };

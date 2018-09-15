@@ -11,19 +11,19 @@ justify-content: flex-end;
 `;
 
     const {
-      paramString, htmlString, mediaString, styleString, failedStyles,
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
     } = inlineConvert(
       testObject,
     );
 
     expect(paramString).toEqual('');
-    expect(htmlString).toEqual('');
+    expect(htmlPseudoString).toEqual('');
     expect(mediaString).toEqual('');
     expect(styleString).toEqual(expectedString);
     expect(failedStyles).toEqual([]);
   });
 
-  it('correctly converts inline styles object to css string, html with add string 1', () => {
+  it('correctly converts inline styles object to css string, html with add string and pseudo class 1', () => {
     const testObject = {
       background: 'green',
       justifyContent: 'flex-end',
@@ -42,26 +42,26 @@ font-size: 15px;
 `;
 
     const {
-      paramString, htmlString, mediaString, styleString, failedStyles,
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
     } = inlineConvert(
       testObject,
     );
 
     expect(paramString).toEqual('');
-    expect(htmlString).toEqual('');
+    expect(htmlPseudoString).toEqual('');
     expect(mediaString).toEqual('');
     expect(styleString).toEqual(expectedString);
     expect(failedStyles).toEqual([]);
   });
 
-  it('correctly converts inline styles object to css string, html with add string 2', () => {
+  it('correctly converts inline styles object to css string, html with add string and pseudo class 2', () => {
     const testObject = {
       background: 'green',
       justifyContent: 'flex-end',
       a: {
-        add: 'div>,>>...button, p>> select',
-        lang: {
-          add: 'p, en',
+        add: 'div>,  >>...button, p>> select',
+        p: {
+          add: ['lang', 'en'],
           flex: '1 1',
         },
         fontSize: '15px',
@@ -70,38 +70,37 @@ font-size: 15px;
     const expectedString = `background: green;
 justify-content: flex-end;
 a, div > button, p > select {
-flex: 1 1;
-font-size: 15px;
 p:lang(en) {
 flex: 1 1;
 }
+font-size: 15px;
 }
 `;
 
     const {
-      paramString, htmlString, mediaString, styleString, failedStyles,
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
     } = inlineConvert(
       testObject,
     );
 
     expect(paramString).toEqual('');
-    expect(htmlString).toEqual('');
+    expect(htmlPseudoString).toEqual('');
     expect(mediaString).toEqual('');
     expect(styleString).toEqual(expectedString);
     expect(failedStyles).toEqual([]);
   });
 
-  it('correctly converts inline styles object to css string, html with add array 1', () => {
+  it('correctly converts inline styles object to css string, html with add array and pseudo class 1', () => {
     const testObject = {
       background: 'green',
       justifyContent: 'flex-end',
       a: {
-        add: ['div', 'p >>>!button', '|>select'],
+        add: ['div', 'p  >>>!button', '|>select'],
         flex: '1 1',
         fontSize: '15px',
       },
-      nthChild: {
-        add: '4n',
+      div: {
+        add: 'nthChild, 4n',
         flex: '1 1',
       },
     };
@@ -111,25 +110,25 @@ a, div, p > button, select {
 flex: 1 1;
 font-size: 15px;
 }
-&:nth-child(4n) {
+div:nth-child(4n) {
 flex: 1 1;
 }
 `;
 
     const {
-      paramString, htmlString, mediaString, styleString, failedStyles,
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
     } = inlineConvert(
       testObject,
     );
 
     expect(paramString).toEqual('');
-    expect(htmlString).toEqual('');
+    expect(htmlPseudoString).toEqual('');
     expect(mediaString).toEqual('');
     expect(styleString).toEqual(expectedString);
     expect(failedStyles).toEqual([]);
   });
 
-  it('correctly converts inline styles object to css string, html with add array 2', () => {
+  it('correctly converts inline styles object to css string, html with add array and pseudo class 2', () => {
     const testObject = {
       background: 'green',
       justifyContent: 'flex-end',
@@ -138,7 +137,7 @@ flex: 1 1;
         flex: '1 1',
         fontSize: '15px',
         hostContext: {
-          add: ['main content'],
+          add: 'main content',
           flex: '1 1',
         },
       },
@@ -155,19 +154,19 @@ flex: 1 1;
 `;
 
     const {
-      paramString, htmlString, mediaString, styleString, failedStyles,
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
     } = inlineConvert(
       testObject,
     );
 
     expect(paramString).toEqual('');
-    expect(htmlString).toEqual('');
+    expect(htmlPseudoString).toEqual('');
     expect(mediaString).toEqual('');
     expect(styleString).toEqual(expectedString);
     expect(failedStyles).toEqual([]);
   });
 
-  it('correctly converts inline styles object to css string, html with add array 2', () => {
+  it('correctly converts inline styles object to css string, html with add array and pseudo class 3', () => {
     const testObject = {
       background: 'green',
       justifyContent: 'flex-end',
@@ -177,7 +176,6 @@ flex: 1 1;
         fontSize: '15px',
       },
       outOfRange: {
-        add: ['main content'],
         flex: '1 1',
       },
     };
@@ -193,13 +191,13 @@ flex: 1 1;
 `;
 
     const {
-      paramString, htmlString, mediaString, styleString, failedStyles,
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
     } = inlineConvert(
       testObject,
     );
 
     expect(paramString).toEqual('');
-    expect(htmlString).toEqual('');
+    expect(htmlPseudoString).toEqual('');
     expect(mediaString).toEqual('');
     expect(styleString).toEqual(expectedString);
     expect(failedStyles).toEqual([]);
@@ -215,7 +213,7 @@ flex: 1 1;
         fontSize: '15px',
       },
       media: {
-        add: 'screen, print & width: 145px, hover',
+        add: 'screen, !print & width: 145px, hover',
         flex: '1 1',
         alignItems: 'center',
       },
@@ -226,20 +224,20 @@ a, div > button, select {
 flex: 1 1;
 font-size: 15px;
 }
-@media screen, print and (width: 145px), (hover) {
+@media screen, not print and (width: 145px), (hover) {
 flex: 1 1;
 align-items: center;
 }
 `;
 
     const {
-      paramString, htmlString, mediaString, styleString, failedStyles,
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
     } = inlineConvert(
       testObject,
     );
 
     expect(paramString).toEqual('');
-    expect(htmlString).toEqual('');
+    expect(htmlPseudoString).toEqual('');
     expect(mediaString).toEqual('');
     expect(styleString).toEqual(expectedString);
     expect(failedStyles).toEqual([]);
@@ -253,6 +251,11 @@ align-items: center;
         add: 'div>,>>...button, p>> select',
         flex: '1 1',
         fontSize: '15px',
+        media: {
+          add: '*print & width: 145px, hover: hover',
+          flex: '1 1',
+          alignItems: 'center',
+        },
       },
     };
     const expectedString = `background: green;
@@ -260,17 +263,21 @@ justify-content: flex-end;
 a, div > button, p > select {
 flex: 1 1;
 font-size: 15px;
+@media only print and (width: 145px), (hover: hover) {
+flex: 1 1;
+align-items: center;
+}
 }
 `;
 
     const {
-      paramString, htmlString, mediaString, styleString, failedStyles,
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
     } = inlineConvert(
       testObject,
     );
 
     expect(paramString).toEqual('');
-    expect(htmlString).toEqual('');
+    expect(htmlPseudoString).toEqual('');
     expect(mediaString).toEqual('');
     expect(styleString).toEqual(expectedString);
     expect(failedStyles).toEqual([]);
@@ -295,13 +302,13 @@ font-size: 15px;
 `;
 
     const {
-      paramString, htmlString, mediaString, styleString, failedStyles,
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
     } = inlineConvert(
       testObject,
     );
 
     expect(paramString).toEqual('');
-    expect(htmlString).toEqual('');
+    expect(htmlPseudoString).toEqual('');
     expect(mediaString).toEqual('');
     expect(styleString).toEqual(expectedString);
     expect(failedStyles).toEqual([]);
@@ -326,44 +333,13 @@ font-size: 15px;
 `;
 
     const {
-      paramString, htmlString, mediaString, styleString, failedStyles,
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
     } = inlineConvert(
       testObject,
     );
 
     expect(paramString).toEqual('');
-    expect(htmlString).toEqual('');
-    expect(mediaString).toEqual('');
-    expect(styleString).toEqual(expectedString);
-    expect(failedStyles).toEqual([]);
-  });
-
-  it('correctly converts inline styles object to css string, html with add array 2', () => {
-    const testObject = {
-      background: 'green',
-      justifyContent: 'flex-end',
-      a: {
-        add: ['div>>,', 'p >&button', '>>select'],
-        flex: '1 1',
-        fontSize: '15px',
-      },
-    };
-    const expectedString = `background: green;
-justify-content: flex-end;
-a, div > p > button, select {
-flex: 1 1;
-font-size: 15px;
-}
-`;
-
-    const {
-      paramString, htmlString, mediaString, styleString, failedStyles,
-    } = inlineConvert(
-      testObject,
-    );
-
-    expect(paramString).toEqual('');
-    expect(htmlString).toEqual('');
+    expect(htmlPseudoString).toEqual('');
     expect(mediaString).toEqual('');
     expect(styleString).toEqual(expectedString);
     expect(failedStyles).toEqual([]);

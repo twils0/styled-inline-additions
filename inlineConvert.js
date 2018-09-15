@@ -1,15 +1,15 @@
 import camelToDash from './camelToDash';
-import stringifyType from './stringifyType';
+import stringifyCategory from './stringifyCategory';
 import handleAdd from './handleAdd';
 
-import { cssCategories } from './Categories/categories';
+import cssCategories from './Categories/categories';
 
-const inlineConvert = (styles) => {
+const inlineConvert = (styles, paramNeeded) => {
   let returnStyleString = '';
-  let returnParamString = '';
-  let returnHtmlString = '';
+  let returnHtmlPseudoString = '';
   let returnMediaString = '';
-  const returnFailedStyles = [];
+  let returnParamsString = '';
+  let returnFailedStyles = [];
 
   if (styles && typeof styles === 'object' && styles.constructor !== Array) {
     Object.keys(styles).forEach((key) => {
@@ -19,20 +19,28 @@ const inlineConvert = (styles) => {
 
       if (typeof style === 'string') {
         if (cleanedKey === 'add') {
-          const { htmlString, paramString, mediaString } = handleAdd(style);
+          const {
+            htmlPseudoString, mediaString, paramString, failedStyles,
+          } = handleAdd(
+            style,
+            paramNeeded,
+          );
 
-          if (htmlString) {
-            returnHtmlString = htmlString;
-          }
-          if (paramString) {
-            returnParamString = paramString;
+          if (htmlPseudoString) {
+            returnHtmlPseudoString = htmlPseudoString;
           }
           if (mediaString) {
             returnMediaString = mediaString;
           }
+          if (paramString) {
+            returnParamsString = paramString;
+          }
+          if (failedStyles.length > 0) {
+            returnFailedStyles = [...returnFailedStyles, ...failedStyles];
+          }
         } else {
+          const formattedKey = stringifyCategory(category, camelToDash(cleanedKey));
           const cleanedStyle = style.replace(/[^A-Za-z0-9- ]/g, '');
-          const formattedKey = stringifyType(category, camelToDash(cleanedKey));
 
           returnStyleString += `${formattedKey}: ${cleanedStyle};\n`;
         }
@@ -40,51 +48,65 @@ const inlineConvert = (styles) => {
         if (style.constructor !== Array) {
           switch (category) {
             case 'htmlElement': {
-              const { styleString, htmlString } = inlineConvert(style);
+              const { styleString, htmlPseudoString } = inlineConvert(style);
 
-              returnStyleString += `${
-                htmlString ? `${cleanedKey}, ${htmlString}` : cleanedKey
-              } {\n${styleString}}\n`;
-              break;
-            }
-            case 'pseudoClass' || 'pseudoElement' || 'pseudoElementDash': {
-              const { styleString, htmlString } = inlineConvert(style);
-              const formattedKey = stringifyType(category, camelToDash(cleanedKey));
-
-              returnStyleString += `${htmlString || '&'}${formattedKey} {\n${styleString}\n}\n`;
-              break;
-            }
-            case 'pseudoClassParam' || 'pseudoElementParam': {
-              const { styleString, htmlString, paramString } = inlineConvert(style);
-
-              const formattedKey = stringifyType(category, camelToDash(cleanedKey));
-              let filteredHtml = '';
-
-              if (htmlString) {
-                const index = htmlString.indexOf(',') > -1;
-
-                if (index > -1) {
-                  filteredHtml = htmlString.substr(0, index);
-                } else {
-                  filteredHtml = htmlString;
-                }
+              if (htmlPseudoString) {
+                returnStyleString += `${cleanedKey}${
+                  /[^A-Za-z0-9]/g.test(htmlPseudoString[0])
+                    ? htmlPseudoString
+                    : `, ${htmlPseudoString}`
+                } {\n${styleString}}\n`;
+              } else {
+                returnStyleString += `${cleanedKey} {\n${styleString}}\n`;
               }
+              break;
+            }
+            case 'pseudoClass':
+            case 'pseudoElement':
+            case 'pseudoClassDash':
+            case 'pseudoElementDash': {
+              const { styleString, htmlPseudoString } = inlineConvert(style);
+              const formattedKey = stringifyCategory(category, camelToDash(cleanedKey));
 
-              returnStyleString += `${filteredHtml || '&'}${formattedKey}${
-                paramString ? `(${paramString})` : ''
-              } {\n${styleString}}\n`;
+              if (htmlPseudoString) {
+                returnStyleString += `&${formattedKey}${
+                  /[^A-Za-z0-9]/g.test(htmlPseudoString[0])
+                    ? htmlPseudoString
+                    : `, ${htmlPseudoString}`
+                } {\n${styleString}}\n`;
+              } else {
+                returnStyleString += `&${formattedKey} {\n${styleString}}\n`;
+              }
+              break;
+            }
+            case 'pseudoClassParam':
+            case 'pseudoElementParam': {
+              const { styleString, htmlPseudoString, paramString } = inlineConvert(style, true);
+              let formattedKey = stringifyCategory(category, camelToDash(cleanedKey));
+
+              console.log('param', paramString);
+
+              if (paramString) {
+                formattedKey += `(${paramString})`;
+              }
+              if (htmlPseudoString) {
+                returnStyleString += `&${formattedKey}${
+                  /[^A-Za-z0-9]/g.test(htmlPseudoString[0])
+                    ? htmlPseudoString
+                    : `, ${htmlPseudoString}`
+                } {\n${styleString}}\n`;
+              } else {
+                returnStyleString += `&${formattedKey} {\n${styleString}}\n`;
+              }
               break;
             }
             case 'mediaQuery': {
               const { styleString, mediaString } = inlineConvert(style);
 
               if (mediaString) {
-                const formattedKey = stringifyType(category, camelToDash(cleanedKey));
+                const formattedKey = stringifyCategory(category, camelToDash(cleanedKey));
 
-                returnStyleString += `${formattedKey} ${mediaString} {
-                  ${styleString}
-                }
-              `;
+                returnStyleString += `${formattedKey} ${mediaString} {\n${styleString}}\n`;
               }
               break;
             }
@@ -93,16 +115,24 @@ const inlineConvert = (styles) => {
               break;
           }
         } else if (cleanedKey === 'add') {
-          const { htmlString, paramString, mediaString } = handleAdd(style);
+          const {
+            htmlPseudoString, mediaString, paramString, failedStyles,
+          } = handleAdd(
+            style,
+            paramNeeded,
+          );
 
-          if (htmlString) {
-            returnHtmlString = htmlString;
-          }
-          if (paramString) {
-            returnParamString = paramString;
+          if (htmlPseudoString) {
+            returnHtmlPseudoString = htmlPseudoString;
           }
           if (mediaString) {
             returnMediaString = mediaString;
+          }
+          if (paramString) {
+            returnParamsString = paramString;
+          }
+          if (failedStyles.length > 0) {
+            returnFailedStyles = [...returnFailedStyles, ...failedStyles];
           }
         }
       }
@@ -110,10 +140,10 @@ const inlineConvert = (styles) => {
   }
 
   return {
-    paramString: returnParamString,
-    htmlString: returnHtmlString,
-    mediaString: returnMediaString,
     styleString: returnStyleString,
+    htmlPseudoString: returnHtmlPseudoString,
+    mediaString: returnMediaString,
+    paramString: returnParamsString,
     failedStyles: returnFailedStyles,
   };
 };

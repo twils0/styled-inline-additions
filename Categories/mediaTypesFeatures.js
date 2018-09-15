@@ -36,3 +36,7 @@ export const mediaFeatures = {
   deviceHeight: 'mediaFeature',
   deviceAspectRatio: 'mediaFeature',
 };
+
+export const mediaFeaturesExceptions = {
+  hover: 'mediaFeature',
+};
