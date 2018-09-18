@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`index throws a console error when provided an addObject prop that is not an object (not counting arrays) 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "inlineAdditions - please provide an object (arrays do not count) for addObject",
+    ],
+  ],
+  "results": Array [
+    Object {
+      "isThrow": false,
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`index throws a console error when provided an addString prop that is not a string 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "inlineAdditions - please provide a string for addString",
+    ],
+  ],
+  "results": Array [
+    Object {
+      "isThrow": false,
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`index throws a console error when returned a failedStyles array with length greater than 0 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "inlineAdditions - the following styles were not understood and ignored: 
+",
+      Array [
+        "testStyle",
+      ],
+    ],
+  ],
+  "results": Array [
+    Object {
+      "isThrow": false,
+      "value": undefined,
+    },
+  ],
+}
+`;

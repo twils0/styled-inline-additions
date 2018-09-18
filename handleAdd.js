@@ -9,6 +9,7 @@ const handleAdd = (styles, paramNeeded) => {
   let htmlPseudoString = '';
   let mediaString = '';
   let paramString = '';
+  let returnParamString = '';
   const failedStyles = [];
   let stylesString = '';
   const htmlPseudoCategories = [
@@ -21,7 +22,9 @@ const handleAdd = (styles, paramNeeded) => {
     'pseudoElementParam',
   ];
   const mediaCategories = ['mediaType', 'mediaFeature'];
+  let paramLoaded = paramNeeded ? false : true;
   let paramIndex = paramNeeded ? 0 : -1;
+  let nextParamIndex = -1;
 
   if (typeof styles === 'string') {
     stylesString = styles;
@@ -29,87 +32,39 @@ const handleAdd = (styles, paramNeeded) => {
     stylesString = JSON.stringify(styles);
   }
 
-  console.log('1 add', styles, paramNeeded);
-
   stylesArray = stylesString
-    .replace(/[^A-Za-z0-9 ,>&|!*:-]/g, '')
-    .replace(/([\s,>&|!*:-]+[\s,>&|!*:-]+)/g, (match) => {
-      const cleanedMatch = match.replace(/\s/g, '');
-      const first = cleanedMatch[0];
-      const last = cleanedMatch.slice(-1);
+    .replace(/[^A-Za-z0-9-\s*,>_+~&|!^:%]/g, '')
+    .replace(/([-\s,*>_+~&|!^:*%]+[-\s,*>_+~&|!^:%]+)/g, match => {
+      const cleanedMatch = match.replace(/(^\s+)|(\s+$)/g, '');
+      if (cleanedMatch.length > 1) {
+        const first = cleanedMatch[0];
+        const last = cleanedMatch.slice(-1);
 
-      if (first === last) {
-        if (first === '&' || first === '|') {
-          return `${first}${first}`;
+        if (first === last) {
+          if (first === '&' || first === '|') {
+            return `${first}${first}`;
+          }
+          return first;
         }
-        return first;
+        return `${first}${last}`;
       }
-      return `${first}${last}`;
+      return cleanedMatch;
     })
-    .split(/([,>&|!*:-])/g)
-    .map(style => style && style.replace(/(^\s+)|(\s+$)/g, ''))
+    .split(/([,>_+~&|!^:%])/g)
     .filter(style => style);
 
-  console.log('2 add', stylesArray);
+  const stylesArrayLen = stylesArray.length - 1;
 
-  for (let i = 0; i < stylesArray.length; i += 1) {
+  for (let i = 0; i <= stylesArrayLen; i += 1) {
     const style = stylesArray[i];
     const nextStyle = stylesArray[i + 1];
     const nextNextStyle = stylesArray[i + 2];
     const category = cssCategories[style];
     const nextCategory = cssCategories[nextStyle];
     const nextNextCategory = cssCategories[nextNextStyle];
-    const charTest = /[,>&|!*:]/g.test(style);
-    const nextCharTest = /[,>&|!*:]/g.test(nextStyle);
-
-    if (paramIndex > -1) {
-      console.log(
-        'param',
-        paramIndex > -1,
-        'style',
-        style !== ',',
-        'cat',
-        category !== 'htmlElement',
-        'char cat',
-        charTest,
-        category,
-        i,
-        stylesArray.length - 1,
-      );
-    }
-
-    if (
-      paramIndex > -1
-      && (style !== ','
-        && category !== 'htmlElement'
-        && (charTest || category || i === stylesArray.length - 1))
-    ) {
-      if (i === stylesArray.length - 1) {
-        htmlPseudoString += `${
-          htmlPseudoString && paramIndex < htmlPseudoString.length ? ', ' : ''
-        }${style}`;
-      }
-
-      if (paramNeeded) {
-        if (htmlPseudoString.slice(0, 2) === ', ') {
-          paramString = htmlPseudoString.slice(2);
-        } else {
-          paramString = htmlPseudoString;
-        }
-
-        htmlPseudoString = '';
-      } else {
-        console.log('p ind', htmlPseudoString, paramIndex);
-
-        htmlPseudoString = `${htmlPseudoString.slice(0, paramIndex)}(${htmlPseudoString.slice(
-          paramIndex,
-        )})`;
-      }
-
-      console.log('***', paramString, '***', htmlPseudoString);
-
-      paramIndex = -1;
-    }
+    const charTest = /[,>_+~&|!^:%]/g.test(style); // don't include param character %
+    const nextCharTest = /[,>_+~&|!^:%]/g.test(nextStyle); // don't include param character %
+    let paramUpdate = false;
 
     if (charTest) {
       switch (style) {
@@ -119,20 +74,23 @@ const handleAdd = (styles, paramNeeded) => {
           const nextMedia = mediaCategories.indexOf(nextCategory) > -1;
           const nextNextMedia = mediaCategories.indexOf(nextNextCategory) > -1;
 
-          if (nextHtmlPseudo || (nextCharTest && nextNextHtmlPseudo)) {
+          if (nextStyle === '%') {
+            paramString += `${paramString ? ', ' : ''}${nextNextStyle}`;
+            i += 2;
+
+            paramUpdate = true;
+          } else if (nextHtmlPseudo || (nextCharTest && nextNextHtmlPseudo)) {
             if (nextCharTest) {
-              htmlPseudoString += `, ${nextNextStyle}`;
-              i += 2;
-            } else {
-              htmlPseudoString += `, ${nextStyle}`;
-              i += 1;
-            }
-          } else if (nextMedia || (nextCharTest && nextNextMedia)) {
-            if (nextCharTest && nextStyle !== '!' && nextStyle !== '*') {
               i += 1;
             }
 
-            mediaString += ',';
+            htmlPseudoString += ', ';
+          } else if (nextMedia || (nextCharTest && nextNextMedia)) {
+            if (nextCharTest && nextStyle !== '!' && nextStyle !== '^') {
+              i += 1;
+            }
+
+            mediaString += ', ';
           } else {
             failedStyles.push(style);
           }
@@ -144,14 +102,57 @@ const handleAdd = (styles, paramNeeded) => {
 
           if (nextHtmlPseudo || (nextCharTest && nextNextHtmlPseudo)) {
             if (nextCharTest) {
-              htmlPseudoString += ` > ${nextNextStyle}`;
-              i += 2;
-            } else {
-              htmlPseudoString += ` > ${nextStyle}`;
               i += 1;
             }
+
+            htmlPseudoString += ' > ';
           } else {
-            failedStyles.concat(style);
+            failedStyles.push(style);
+          }
+          break;
+        }
+        case '_': {
+          const nextHtmlPseudo = htmlPseudoCategories.indexOf(nextCategory) > -1;
+          const nextNextHtmlPseudo = htmlPseudoCategories.indexOf(nextNextCategory) > -1;
+
+          if (nextHtmlPseudo || (nextCharTest && nextNextHtmlPseudo)) {
+            if (nextCharTest) {
+              i += 1;
+            }
+
+            htmlPseudoString += ' ';
+          } else {
+            failedStyles.push(style);
+          }
+          break;
+        }
+        case '+': {
+          const nextHtmlPseudo = htmlPseudoCategories.indexOf(nextCategory) > -1;
+          const nextNextHtmlPseudo = htmlPseudoCategories.indexOf(nextNextCategory) > -1;
+
+          if (nextHtmlPseudo || (nextCharTest && nextNextHtmlPseudo)) {
+            if (nextCharTest) {
+              i += 1;
+            }
+
+            htmlPseudoString += ' + ';
+          } else {
+            failedStyles.push(style);
+          }
+          break;
+        }
+        case '~': {
+          const nextHtmlPseudo = htmlPseudoCategories.indexOf(nextCategory) > -1;
+          const nextNextHtmlPseudo = htmlPseudoCategories.indexOf(nextNextCategory) > -1;
+
+          if (nextHtmlPseudo || (nextCharTest && nextNextHtmlPseudo)) {
+            if (nextCharTest) {
+              i += 1;
+            }
+
+            htmlPseudoString += ' ~ ';
+          } else {
+            failedStyles.push(style);
           }
           break;
         }
@@ -160,11 +161,11 @@ const handleAdd = (styles, paramNeeded) => {
           const nextNextMedia = mediaCategories.indexOf(nextNextCategory) > -1;
 
           if (nextMedia || (nextCharTest && nextNextMedia)) {
-            if (nextCharTest && nextStyle !== '!' && nextStyle !== '*') {
+            if (nextCharTest && nextStyle !== '!' && nextStyle !== '^') {
               i += 1;
             }
 
-            mediaString += ' and';
+            mediaString += ' and ';
           } else {
             failedStyles.push(style);
           }
@@ -179,7 +180,7 @@ const handleAdd = (styles, paramNeeded) => {
               i += 1;
             }
 
-            mediaString += ',';
+            mediaString += ', ';
           } else {
             failedStyles.push(style);
           }
@@ -194,13 +195,13 @@ const handleAdd = (styles, paramNeeded) => {
               i += 1;
             }
 
-            mediaString += `${mediaString ? ' ' : ''}not`;
+            mediaString += `not `;
           } else {
             failedStyles.push(style);
           }
           break;
         }
-        case '*': {
+        case '^': {
           const nextMedia = mediaCategories.indexOf(nextCategory) > -1;
           const nextNextMedia = mediaCategories.indexOf(nextNextCategory) > -1;
 
@@ -209,133 +210,227 @@ const handleAdd = (styles, paramNeeded) => {
               i += 1;
             }
 
-            mediaString += `${mediaString ? ' ' : ''}only`;
+            mediaString += `only `;
           } else {
             failedStyles.push(style);
           }
           break;
         }
         case ':': {
+          const prevStyle = stylesArray[i - 1];
+          const prevCategory = cssCategories[prevStyle];
+          const prevHtmlPseudo = htmlPseudoCategories.indexOf(prevCategory) > -1;
           const nextHtmlPseudo = htmlPseudoCategories.indexOf(nextCategory) > -1;
           const nextNextHtmlPseudo = htmlPseudoCategories.indexOf(nextNextCategory) > -1;
 
           if (nextHtmlPseudo || (nextCharTest && nextNextHtmlPseudo)) {
             if (nextCharTest) {
-              htmlPseudoString += `:${nextNextStyle}`;
+              const formattedNextNextStyle = stringifyCategory(
+                nextNextCategory,
+                camelToDash(nextNextStyle)
+              );
+
+              if (prevHtmlPseudo || (!htmlPseudoString && !paramString)) {
+                htmlPseudoString += formattedNextNextStyle;
+              } else {
+                htmlPseudoString += `&${formattedNextNextStyle}`;
+              }
+
+              if (
+                nextNextCategory === 'pseudoClassParam' ||
+                nextNextCategory === 'pseudoElementParam'
+              ) {
+                if (paramIndex > -1) {
+                  paramUpdate = false;
+                  nextParamIndex = htmlPseudoString.length;
+                } else {
+                  paramUpdate = true;
+                  paramIndex = htmlPseudoString.length;
+                }
+              }
+
               i += 2;
             } else {
-              htmlPseudoString += `:${nextStyle}`;
+              const formattedNextStyle = stringifyCategory(nextCategory, camelToDash(nextStyle));
+
+              if (prevHtmlPseudo || (!htmlPseudoString && !paramString)) {
+                htmlPseudoString += formattedNextStyle;
+              } else {
+                htmlPseudoString += `&${formattedNextStyle}`;
+              }
+
+              if (nextCategory === 'pseudoClassParam' || nextCategory === 'pseudoElementParam') {
+                if (paramIndex > -1) {
+                  paramUpdate = false;
+                  nextParamIndex = htmlPseudoString.length;
+                } else {
+                  paramUpdate = true;
+                  paramIndex = htmlPseudoString.length;
+                }
+              }
+
               i += 1;
             }
           } else {
-            failedStyles.concat(style);
+            failedStyles.push(style);
           }
           break;
         }
-        default: {
-          const nextNextHtmlPseudo = htmlPseudoCategories.indexOf(nextNextCategory) > -1;
-          const nextNextMedia = mediaCategories.indexOf(nextNextCategory) > -1;
-
-          if (nextStyle === ',' && nextNextHtmlPseudo) {
-            htmlPseudoString += `, ${nextNextStyle}`;
-            i += 2;
-          } else if (nextStyle === '>' && nextNextHtmlPseudo) {
-            htmlPseudoString += ` > ${nextNextStyle}`;
-            i += 2;
-          } else if (nextStyle === ',' && nextNextMedia) {
-            mediaString += ',';
-            i += 1;
-          } else if (nextStyle === '&' && nextNextMedia) {
-            mediaString += ' and';
-            i += 1;
-          } else if (nextStyle === '|' && nextNextMedia) {
-            mediaString += ',';
-            i += 1;
-          } else if (nextStyle === '!' && nextNextMedia) {
-            mediaString += `${mediaString ? ' ' : ''}not`;
-            i += 1;
-          } else if (nextStyle === '*' && nextNextMedia) {
-            mediaString += `${mediaString ? ' ' : ''}only`;
-            i += 1;
-          } else if (nextStyle === ':' && nextNextHtmlPseudo) {
-            htmlPseudoString += `:${nextNextStyle}`;
-            i += 2;
+        case '%': {
+          if (
+            (!nextCharTest && !nextCategory) ||
+            nextCategory === 'htmlElement' ||
+            (nextCharTest && (!nextNextCategory || nextNextCategory === 'htmlElement'))
+          ) {
+            if (nextCharTest) {
+              paramString += `${paramString ? ', ' : ''}${nextNextStyle}`;
+              i += 2;
+            } else {
+              paramString += `${paramString ? ', ' : ''}${nextStyle}`;
+              i += 1;
+            }
           } else {
             failedStyles.push(style);
           }
+
+          paramUpdate = true;
           break;
         }
       }
     } else {
       switch (category) {
-        case 'htmlElement':
+        case 'htmlElement': {
+          htmlPseudoString += style;
+          break;
+        }
         case 'pseudoClass':
         case 'pseudoElement':
         case 'pseudoClassDash':
         case 'pseudoElementDash': {
+          const prevStyle = stylesArray[i - 1];
+          const prevCategory = cssCategories[prevStyle];
+          const prevHtmlPseudo = htmlPseudoCategories.indexOf(prevCategory) > -1;
           const formattedStyle = stringifyCategory(category, camelToDash(style));
 
-          htmlPseudoString += formattedStyle;
+          if (prevHtmlPseudo || (!htmlPseudoString && !paramString)) {
+            htmlPseudoString += formattedStyle;
+          } else {
+            htmlPseudoString += `&${formattedStyle}`;
+          }
           break;
         }
         case 'pseudoClassParam':
         case 'pseudoElementParam': {
+          const prevStyle = stylesArray[i - 1];
+          const prevCategory = cssCategories[prevStyle];
+          const prevHtmlPseudo = htmlPseudoCategories.indexOf(prevCategory) > -1;
           const formattedStyle = stringifyCategory(category, camelToDash(style));
 
-          htmlPseudoString += formattedStyle;
+          if (prevHtmlPseudo || (!htmlPseudoString && !paramString)) {
+            htmlPseudoString += formattedStyle;
+          } else {
+            htmlPseudoString += `&${formattedStyle}`;
+          }
 
-          paramIndex = htmlPseudoString.length;
+          if (paramIndex > -1) {
+            paramUpdate = false;
+            nextParamIndex = htmlPseudoString.length;
+          } else {
+            paramUpdate = true;
+            paramIndex = htmlPseudoString.length;
+          }
           break;
         }
         case 'mediaType': {
-          const formattedStyle = stringifyCategory(category, camelToDash(style));
-
-          mediaString += `${mediaString ? ' ' : ''}${formattedStyle}`;
+          mediaString += style;
           break;
         }
         case 'mediaFeature': {
+          const nextNextNextStyle = stylesArray[i + 3];
           const formattedStyle = stringifyCategory(category, camelToDash(style));
-          const nextNextCharTest = /[,>&|!*:]/g.test(nextNextStyle);
-          const nextException = mediaFeaturesExceptions[nextStyle];
+          const nextNextCharTest = /[,>&|!^:]/g.test(nextNextStyle);
+          const nextNextNextCharTest = /[,>&|!^:]/g.test(nextNextNextStyle);
+          const nextNextNextCategory = cssCategories[nextNextNextStyle];
           const nextNextException = mediaFeaturesExceptions[nextNextStyle];
+          const nextNextNextException = mediaFeaturesExceptions[nextNextNextStyle];
 
           if (
-            nextStyle === ':'
-            && (nextNextStyle && !nextNextCharTest && (!nextNextCategory || nextNextException))
+            nextStyle === ':' &&
+            (nextNextStyle && !nextNextCharTest && (!nextNextCategory || nextNextException))
           ) {
             const formattedNextNextStyle = stringifyCategory(category, camelToDash(nextNextStyle));
 
-            mediaString += `${
-              mediaString ? ' ' : ''
-            }(${formattedStyle}: ${formattedNextNextStyle})`;
-            i += 2;
-          } else if (nextStyle && !nextCharTest && (!nextCategory || nextException)) {
-            const formattedNextStyle = stringifyCategory(category, camelToDash(nextStyle));
+            mediaString += `(${formattedStyle}: ${formattedNextNextStyle})`;
 
-            mediaString += `${mediaString ? ' ' : ''}(${formattedStyle}: ${formattedNextStyle})`;
+            i += 2;
+          } else if (
+            nextStyle === ':' &&
+            nextNextCharTest &&
+            (nextNextNextStyle &&
+              !nextNextNextCharTest &&
+              (!nextNextNextCategory || nextNextNextException))
+          ) {
+            const formattedNextNextNextStyle = stringifyCategory(
+              category,
+              camelToDash(nextNextNextStyle)
+            );
+
+            mediaString += `(${formattedStyle}: ${formattedNextNextNextStyle})`;
+
+            i += 3;
+          } else if (
+            nextNextStyle === ':' &&
+            nextCharTest &&
+            (nextNextNextStyle &&
+              !nextNextNextCharTest &&
+              (!nextNextNextCategory || nextNextNextException))
+          ) {
+            const formattedNextNextNextStyle = stringifyCategory(
+              category,
+              camelToDash(nextNextNextStyle)
+            );
+
+            mediaString += `(${formattedStyle}: ${formattedNextNextNextStyle})`;
+
+            i += 3;
           } else {
-            mediaString += `${mediaString ? ' ' : ''}(${formattedStyle})`;
+            mediaString += `(${formattedStyle})`;
           }
           break;
         }
         default: {
-          if (paramIndex > -1) {
-            htmlPseudoString += style;
-          } else {
-            failedStyles.push(style);
-          }
+          failedStyles.push(style);
           break;
         }
       }
     }
-  }
 
-  console.log('3 add', paramString);
+    if (paramIndex > -1 && (!paramUpdate || i === stylesArrayLen)) {
+      if (paramNeeded && !paramLoaded) {
+        returnParamString = paramString;
+
+        paramLoaded = true;
+      } else if (paramString) {
+        htmlPseudoString = `${htmlPseudoString.slice(
+          0,
+          paramIndex
+        )}(${paramString})${htmlPseudoString.slice(paramIndex)}`;
+      }
+
+      paramString = '';
+      if (nextParamIndex > -1) {
+        paramIndex = nextParamIndex;
+        nextParamIndex = -1;
+      } else {
+        paramIndex = -1;
+      }
+    }
+  }
 
   return {
     htmlPseudoString,
     mediaString,
-    paramString,
+    paramString: returnParamString,
     failedStyles,
   };
 };

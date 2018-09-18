@@ -8,8 +8,8 @@ const stringifyCategory = (type, key) => {
     case 'pseudoElement':
     case 'pseudoElementParam':
       return `::${key}`;
-    case 'pseudoClassDash':
-      return `:-${key}`;
+    // case 'pseudoClassDash':
+    // return `:-${key}`;
     case 'pseudoElementDash':
       return `::-${key}`;
     case 'mediaQuery':

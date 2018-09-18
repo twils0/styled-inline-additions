@@ -38,24 +38,6 @@ const config = {
         use: ['style-loader', MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
-        test: /\.(png|jpe?g|gif|svg)$/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: 50000,
-              name: 'Images/[name].[ext]',
-              publicPath: '/',
-            },
-          },
-          'image-webpack-loader',
-        ],
-      },
-      {
-        test: /\.ico$/,
-        use: 'file-loader',
-      },
-      {
         test: /\.html$/,
         use: 'html-loader',
       },

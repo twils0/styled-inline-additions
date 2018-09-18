@@ -6,6 +6,7 @@ export const pseudoElements = {
   firstLetter: 'pseudoElement',
   firstLine: 'pseudoElement',
   grammarError: 'pseudoElement',
+  marker: 'pseudoElement',
   placeholder: 'pseudoElement',
   selection: 'pseudoElement',
   spellingError: 'pseudoElement',

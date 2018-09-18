@@ -7,7 +7,11 @@ export const mediaTypes = {
 
 export const mediaFeatures = {
   width: 'mediaFeature',
+  minWidth: 'mediaFeature',
+  maxWidth: 'mediaFeature',
   height: 'mediaFeature',
+  minHeight: 'mediaFeature',
+  maxHeight: 'mediaFeature',
   aspectRatio: 'mediaFeature',
   orientation: 'mediaFeature',
   resolution: 'mediaFeature',
@@ -23,7 +27,7 @@ export const mediaFeatures = {
   monochrome: 'mediaFeature',
   invertedColors: 'mediaFeature',
   pointer: 'mediaFeature',
-  hover: 'mediaFeature',
+  mediaHover: 'mediaFeature',
   anyPointer: 'mediaFeature',
   anyHover: 'mediaFeature',
   lightLevel: 'mediaFeature',
@@ -38,5 +42,5 @@ export const mediaFeatures = {
 };
 
 export const mediaFeaturesExceptions = {
-  hover: 'mediaFeature',
+  mediaHover: 'mediaFeature',
 };
