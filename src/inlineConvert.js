@@ -12,16 +12,18 @@ const inlineConvert = (styles, paramNeeded) => {
   let returnFailedStyles = [];
 
   if (styles && typeof styles === 'object' && styles.constructor !== Array) {
-    Object.keys(styles).forEach(key => {
+    Object.keys(styles).forEach((key) => {
       const style = styles[key];
       const cleanedKey = key.replace(/[^A-Za-z0-9]/g, '');
       const category = cssCategories[cleanedKey];
 
       if (typeof style === 'string') {
         if (cleanedKey === 'add') {
-          const { htmlPseudoString, mediaString, paramString, failedStyles } = handleAdd(
+          const {
+            htmlPseudoString, mediaString, paramString, failedStyles,
+          } = handleAdd(
             style,
-            paramNeeded
+            paramNeeded,
           );
 
           if (htmlPseudoString) {
@@ -81,9 +83,11 @@ const inlineConvert = (styles, paramNeeded) => {
             }
             case 'pseudoClassParam':
             case 'pseudoElementParam': {
-              const { styleString, htmlPseudoString, paramString, failedStyles } = inlineConvert(
+              const {
+                styleString, htmlPseudoString, paramString, failedStyles,
+              } = inlineConvert(
                 style,
-                true
+                true,
               );
               let formattedKey = stringifyCategory(category, camelToDash(cleanedKey));
 
@@ -122,9 +126,11 @@ const inlineConvert = (styles, paramNeeded) => {
               break;
           }
         } else if (cleanedKey === 'add') {
-          const { htmlPseudoString, mediaString, paramString, failedStyles } = handleAdd(
+          const {
+            htmlPseudoString, mediaString, paramString, failedStyles,
+          } = handleAdd(
             style,
-            paramNeeded
+            paramNeeded,
           );
 
           if (htmlPseudoString) {

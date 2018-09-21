@@ -1,4 +1,4 @@
-import inlineAdditions from '../index';
+import inlineAdditions from '../inlineAdditions';
 import inlineConvert from '../inlineConvert';
 
 global.console.error = jest.fn();

@@ -1,22 +1,4 @@
 {
-  "presets": [
-    [
-      "env",
-      {
-        "targets": {
-          "browsers": ["last 2 versions", "ie >= 10"]
-        }
-      }
-    ],
-    "stage-1",
-    "react"
-  ],
-  "plugins": [
-    "transform-runtime",
-    "react-hot-loader/babel",
-    "syntax-dynamic-import",
-    "dynamic-import-node",
-    "transform-react-jsx-source",
-    "styled-components"
-  ]
+  "presets": ["env", "stage-1", "react"],
+  "plugins": ["syntax-dynamic-import", "transform-react-jsx-source"]
 }

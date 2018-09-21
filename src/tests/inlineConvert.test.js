@@ -4,8 +4,10 @@ describe('inlineConvert', () => {
   it('correctly returns empty strings and empty failedStyles array, when provided a null or undefined object', () => {
     const testObject = undefined;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -18,8 +20,10 @@ describe('inlineConvert', () => {
   it('correctly returns empty strings and empty failedStyles array, when provided am array', () => {
     const testObject = [];
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -45,8 +49,10 @@ align-items: center;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -75,8 +81,10 @@ font-size: 15px;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -97,6 +105,10 @@ font-size: 15px;
           add: ['lang', '%en', '_not', 'a', 'div'],
           flex: '1 1',
         },
+        dir: {
+          add: '%ltr',
+          background: 'green',
+        },
         fontSize: '15px',
       },
     };
@@ -106,12 +118,17 @@ a, div > button, p > select {
 p:lang(en), &:not, a, div {
 flex: 1 1;
 }
+&:dir(ltr) {
+background: green;
+}
 font-size: 15px;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -152,8 +169,10 @@ font-size: 15px;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -188,8 +207,10 @@ flex: 1 1;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -224,8 +245,10 @@ flex: 1 1;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -261,8 +284,10 @@ flex: 1 1;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -303,8 +328,10 @@ display: none;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -341,8 +368,10 @@ align-items: center;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -361,7 +390,7 @@ align-items: center;
         flex: '1 1',
         fontSize: '15px',
         media: {
-          add: '^& speech, ^print &!   width: 145px |& mediaHover: mediaHover',
+          add: '?& speech, ?print &!   width: 145px |& mediaHover: mediaHover',
           flex: '1 1',
           alignItems: 'center',
         },
@@ -379,8 +408,10 @@ align-items: center;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -399,7 +430,7 @@ align-items: center;
         flex: '1 1',
         fontSize: '15px',
         media: {
-          add: '!&screen, ^print +&   width: 145px ~, mediaHover: mediaHover',
+          add: '!&screen, ?print +&   width: 145px ~, mediaHover: mediaHover',
           flex: '1 1',
           alignItems: 'center',
         },
@@ -417,8 +448,10 @@ align-items: center;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -437,7 +470,7 @@ align-items: center;
         flex: '1 1',
         fontSize: '15px',
         media: {
-          add: 'screen, ^print &!   overflowBlock: scroll &&width: 145px, mediaHover: none',
+          add: 'screen, ?print &!   overflowBlock: scroll &&width: 145px, mediaHover: none',
           flex: '1 1',
           alignItems: 'center',
         },
@@ -455,8 +488,10 @@ align-items: center;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -475,7 +510,7 @@ align-items: center;
         flex: '1 1',
         fontSize: '15px',
         media: {
-          add: 'print, ^screen&!   width: 145px, mediaHover: mediaHover',
+          add: 'print, ?screen&!   width: 145px, mediaHover: mediaHover',
           flex: '1 1',
           alignItems: 'center',
         },
@@ -493,8 +528,10 @@ align-items: center;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -526,8 +563,10 @@ background-color: green;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -555,8 +594,10 @@ font-size: 15px;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -571,7 +612,7 @@ font-size: 15px;
       background: 'green',
       justifyContent: 'flex-end',
       placeholder: {
-        add: ['> div ^', 'p:', '    firstLetter'],
+        add: ['> div ?', 'p:', '    firstLetter'],
         content: 'testContent',
         fontSize: '15px',
       },
@@ -592,15 +633,17 @@ align-items: center;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
     expect(htmlPseudoString).toEqual('');
     expect(mediaString).toEqual('');
     expect(styleString).toEqual(expectedString);
-    expect(failedStyles).toEqual(['^', '%', ':']);
+    expect(failedStyles).toEqual(['?', '%', ':']);
   });
 
   it('correctly converts inline styles object to css string, pseudo element with add array 2', () => {
@@ -620,8 +663,10 @@ font-size: 15px;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -649,8 +694,10 @@ font-size: 15px;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -678,8 +725,10 @@ font-size: 15px;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -714,8 +763,10 @@ text-decoration: underline;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -750,8 +801,10 @@ text-decoration: underline;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');
@@ -786,8 +839,10 @@ text-decoration: underline;
 }
 `;
 
-    const { paramString, htmlPseudoString, mediaString, styleString, failedStyles } = inlineConvert(
-      testObject
+    const {
+      paramString, htmlPseudoString, mediaString, styleString, failedStyles,
+    } = inlineConvert(
+      testObject,
     );
 
     expect(paramString).toEqual('');

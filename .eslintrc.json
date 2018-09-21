@@ -10,7 +10,7 @@
     }
   },
   "rules": {
-    "no-console": [{ "allow": "error" }],
+    "no-console": ["warn", { "allow": ["error"] }],
     "function-paren-newline": ["error", "consistent"],
     "react/no-this-in-sfc": "off",
     "react/destructuring-assignment": "off",

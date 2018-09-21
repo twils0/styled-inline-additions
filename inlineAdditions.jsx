@@ -1,4 +1,4 @@
-import inlineConvert from './inlineConvert';
+import inlineConvert from './src/inlineConvert';
 
 const inlineAdditions = ({ addString, addObject }) => {
   let finalStyleString = '';
@@ -7,7 +7,7 @@ const inlineAdditions = ({ addString, addObject }) => {
     if (typeof addString === 'string') {
       finalStyleString += `\n${addString}\n`;
     } else {
-      console.error('inlineAdditions - please provide a string for addString');
+      console.error('styled-inline-additions: please provide a string for addString');
     }
   }
 
@@ -18,13 +18,13 @@ const inlineAdditions = ({ addString, addObject }) => {
 
       if (failedStyles.length > 0) {
         console.error(
-          'inlineAdditions - the following styles were not understood and ignored: \n',
+          'styled-inline-additions: the following styles were not understood and ignored: \n',
           failedStyles,
         );
       }
     } else {
       console.error(
-        'inlineAdditions - please provide an object (arrays do not count) for addObject',
+        'styled-inline-additions: please provide an object (arrays do not count) for addObject',
       );
     }
   }

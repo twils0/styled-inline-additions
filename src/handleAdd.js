@@ -22,7 +22,7 @@ const handleAdd = (styles, paramNeeded) => {
     'pseudoElementParam',
   ];
   const mediaCategories = ['mediaType', 'mediaFeature'];
-  let paramLoaded = paramNeeded ? false : true;
+  let paramLoaded = !paramNeeded;
   let paramIndex = paramNeeded ? 0 : -1;
   let nextParamIndex = -1;
 
@@ -33,8 +33,8 @@ const handleAdd = (styles, paramNeeded) => {
   }
 
   stylesArray = stylesString
-    .replace(/[^A-Za-z0-9-\s*,>_+~&|!^:%]/g, '')
-    .replace(/([-\s,*>_+~&|!^:*%]+[-\s,*>_+~&|!^:%]+)/g, match => {
+    .replace(/[^A-Za-z0-9-\s*,>_+~&|!?:%]/g, '')
+    .replace(/([-\s,*>_+~&|!?:*%]+[-\s,*>_+~&|!?:%]+)/g, (match) => {
       const cleanedMatch = match.replace(/(^\s+)|(\s+$)/g, '');
       if (cleanedMatch.length > 1) {
         const first = cleanedMatch[0];
@@ -50,8 +50,10 @@ const handleAdd = (styles, paramNeeded) => {
       }
       return cleanedMatch;
     })
-    .split(/([,>_+~&|!^:%])/g)
+    .split(/([,>_+~&|!?:%])/g)
     .filter(style => style);
+
+  console.log('1 add', stylesArray);
 
   const stylesArrayLen = stylesArray.length - 1;
 
@@ -62,8 +64,8 @@ const handleAdd = (styles, paramNeeded) => {
     const category = cssCategories[style];
     const nextCategory = cssCategories[nextStyle];
     const nextNextCategory = cssCategories[nextNextStyle];
-    const charTest = /[,>_+~&|!^:%]/g.test(style); // don't include param character %
-    const nextCharTest = /[,>_+~&|!^:%]/g.test(nextStyle); // don't include param character %
+    const charTest = /[,>_+~&|!?:%]/g.test(style); // don't include param character %
+    const nextCharTest = /[,>_+~&|!?:%]/g.test(nextStyle); // don't include param character %
     let paramUpdate = false;
 
     if (charTest) {
@@ -76,6 +78,7 @@ const handleAdd = (styles, paramNeeded) => {
 
           if (nextStyle === '%') {
             paramString += `${paramString ? ', ' : ''}${nextNextStyle}`;
+
             i += 2;
 
             paramUpdate = true;
@@ -86,7 +89,7 @@ const handleAdd = (styles, paramNeeded) => {
 
             htmlPseudoString += ', ';
           } else if (nextMedia || (nextCharTest && nextNextMedia)) {
-            if (nextCharTest && nextStyle !== '!' && nextStyle !== '^') {
+            if (nextCharTest && nextStyle !== '!' && nextStyle !== '?') {
               i += 1;
             }
 
@@ -161,7 +164,7 @@ const handleAdd = (styles, paramNeeded) => {
           const nextNextMedia = mediaCategories.indexOf(nextNextCategory) > -1;
 
           if (nextMedia || (nextCharTest && nextNextMedia)) {
-            if (nextCharTest && nextStyle !== '!' && nextStyle !== '^') {
+            if (nextCharTest && nextStyle !== '!' && nextStyle !== '?') {
               i += 1;
             }
 
@@ -195,13 +198,13 @@ const handleAdd = (styles, paramNeeded) => {
               i += 1;
             }
 
-            mediaString += `not `;
+            mediaString += 'not ';
           } else {
             failedStyles.push(style);
           }
           break;
         }
-        case '^': {
+        case '?': {
           const nextMedia = mediaCategories.indexOf(nextCategory) > -1;
           const nextNextMedia = mediaCategories.indexOf(nextNextCategory) > -1;
 
@@ -210,7 +213,7 @@ const handleAdd = (styles, paramNeeded) => {
               i += 1;
             }
 
-            mediaString += `only `;
+            mediaString += 'only ';
           } else {
             failedStyles.push(style);
           }
@@ -227,7 +230,7 @@ const handleAdd = (styles, paramNeeded) => {
             if (nextCharTest) {
               const formattedNextNextStyle = stringifyCategory(
                 nextNextCategory,
-                camelToDash(nextNextStyle)
+                camelToDash(nextNextStyle),
               );
 
               if (prevHtmlPseudo || (!htmlPseudoString && !paramString)) {
@@ -237,8 +240,8 @@ const handleAdd = (styles, paramNeeded) => {
               }
 
               if (
-                nextNextCategory === 'pseudoClassParam' ||
-                nextNextCategory === 'pseudoElementParam'
+                nextNextCategory === 'pseudoClassParam'
+                || nextNextCategory === 'pseudoElementParam'
               ) {
                 if (paramIndex > -1) {
                   paramUpdate = false;
@@ -278,9 +281,9 @@ const handleAdd = (styles, paramNeeded) => {
         }
         case '%': {
           if (
-            (!nextCharTest && !nextCategory) ||
-            nextCategory === 'htmlElement' ||
-            (nextCharTest && (!nextNextCategory || nextNextCategory === 'htmlElement'))
+            (!nextCharTest && !nextCategory)
+            || nextCategory === 'htmlElement'
+            || (nextCharTest && (!nextNextCategory || nextNextCategory === 'htmlElement'))
           ) {
             if (nextCharTest) {
               paramString += `${paramString ? ', ' : ''}${nextNextStyle}`;
@@ -294,6 +297,10 @@ const handleAdd = (styles, paramNeeded) => {
           }
 
           paramUpdate = true;
+          break;
+        }
+        default: {
+          failedStyles.push(style);
           break;
         }
       }
@@ -348,15 +355,15 @@ const handleAdd = (styles, paramNeeded) => {
         case 'mediaFeature': {
           const nextNextNextStyle = stylesArray[i + 3];
           const formattedStyle = stringifyCategory(category, camelToDash(style));
-          const nextNextCharTest = /[,>&|!^:]/g.test(nextNextStyle);
-          const nextNextNextCharTest = /[,>&|!^:]/g.test(nextNextNextStyle);
+          const nextNextCharTest = /[,>&|!?:]/g.test(nextNextStyle);
+          const nextNextNextCharTest = /[,>&|!?:]/g.test(nextNextNextStyle);
           const nextNextNextCategory = cssCategories[nextNextNextStyle];
           const nextNextException = mediaFeaturesExceptions[nextNextStyle];
           const nextNextNextException = mediaFeaturesExceptions[nextNextNextStyle];
 
           if (
-            nextStyle === ':' &&
-            (nextNextStyle && !nextNextCharTest && (!nextNextCategory || nextNextException))
+            nextStyle === ':'
+            && (nextNextStyle && !nextNextCharTest && (!nextNextCategory || nextNextException))
           ) {
             const formattedNextNextStyle = stringifyCategory(category, camelToDash(nextNextStyle));
 
@@ -364,30 +371,30 @@ const handleAdd = (styles, paramNeeded) => {
 
             i += 2;
           } else if (
-            nextStyle === ':' &&
-            nextNextCharTest &&
-            (nextNextNextStyle &&
-              !nextNextNextCharTest &&
-              (!nextNextNextCategory || nextNextNextException))
+            nextStyle === ':'
+            && nextNextCharTest
+            && (nextNextNextStyle
+              && !nextNextNextCharTest
+              && (!nextNextNextCategory || nextNextNextException))
           ) {
             const formattedNextNextNextStyle = stringifyCategory(
               category,
-              camelToDash(nextNextNextStyle)
+              camelToDash(nextNextNextStyle),
             );
 
             mediaString += `(${formattedStyle}: ${formattedNextNextNextStyle})`;
 
             i += 3;
           } else if (
-            nextNextStyle === ':' &&
-            nextCharTest &&
-            (nextNextNextStyle &&
-              !nextNextNextCharTest &&
-              (!nextNextNextCategory || nextNextNextException))
+            nextNextStyle === ':'
+            && nextCharTest
+            && (nextNextNextStyle
+              && !nextNextNextCharTest
+              && (!nextNextNextCategory || nextNextNextException))
           ) {
             const formattedNextNextNextStyle = stringifyCategory(
               category,
-              camelToDash(nextNextNextStyle)
+              camelToDash(nextNextNextStyle),
             );
 
             mediaString += `(${formattedStyle}: ${formattedNextNextNextStyle})`;
@@ -406,6 +413,8 @@ const handleAdd = (styles, paramNeeded) => {
     }
 
     if (paramIndex > -1 && (!paramUpdate || i === stylesArrayLen)) {
+      console.log('params', paramNeeded, paramLoaded, paramIndex, nextParamIndex, paramString);
+
       if (paramNeeded && !paramLoaded) {
         returnParamString = paramString;
 
@@ -413,19 +422,22 @@ const handleAdd = (styles, paramNeeded) => {
       } else if (paramString) {
         htmlPseudoString = `${htmlPseudoString.slice(
           0,
-          paramIndex
+          paramIndex,
         )}(${paramString})${htmlPseudoString.slice(paramIndex)}`;
       }
 
-      paramString = '';
       if (nextParamIndex > -1) {
         paramIndex = nextParamIndex;
         nextParamIndex = -1;
       } else {
         paramIndex = -1;
       }
+
+      paramString = '';
     }
   }
+
+  console.log('2 add', htmlPseudoString, mediaString, paramString, failedStyles);
 
   return {
     htmlPseudoString,
