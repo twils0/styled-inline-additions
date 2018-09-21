@@ -237,7 +237,7 @@ const PageGrid = props => {
 
       - [ > ] : greater-than signs can be used as selectors ('p > div');
 
-      - [ \ _] : underscores can be used as a space selector ('body_p,div' will be parsed as 'body p, div)
+      - [ _ ] : underscores can be used as a space selector ('body_p,div' will be parsed as 'body p, div)
 
       - [ + ] : plus signs can be used as selectors ('p + div');
 
