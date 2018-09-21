@@ -1,8 +1,18 @@
 {
   "name": "styled-inline-additions",
-  "version": "v0.5.0-alpha",
+  "version": "v0.5.2-alpha",
   "description": "styled-components helper that converts a Javascript object of inline styles into a string of valid CSS",
-  "main": "bin/inlineAdditions.jsx",
+  "license": "Apache-2.0",
+  "author": "twils0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/twils0/styled-inline-additions.git"
+  },
+  "bugs": {
+    "url": "https://github.com/twils0/styled-inline-additions.git/issues"
+  },
+  "homepage": "https://github.com/twils0/styled-inline-additions.git#readme",
+  "main": "bin/inlineAdditions.min.jsx",
   "scripts": {
     "webpack": "webpack --progress --colors --mode production",
     "dev": "webpack-dev-server --mode development --open",
@@ -23,16 +33,6 @@
       "\\.(jsx?)$": "babel-jest"
     }
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/twils0/dynalogic_client.git"
-  },
-  "author": "Tyler Wilson",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/twils0/dynalogic_client/issues"
-  },
-  "homepage": "https://github.com/twils0/dynalogic_client#readme",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.6",

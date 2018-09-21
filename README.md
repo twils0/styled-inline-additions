@@ -1,6 +1,6 @@
 # styled-inline-additions
 
-styled-inline-additions is extremely fast and light-weight (no dependencies; 15.9 KB minified; 4.26 KB minified + gzipped) module that converts a Javascript object of inline styles, with a few unique syntax additions to accomodate selectors, pseudo-classes, pseudo-elements, and media queries, to a string of valid CSS. styled-inline-additions also provides a small amount of error/typo correction (possibly more to come).
+styled-inline-additions is extremely fast and light-weight (no dependencies; 15.9 KB minified; 4.3 KB minified + gzipped) module that converts a Javascript object of inline styles, with a few unique syntax additions to accomodate selectors, pseudo-classes, pseudo-elements, and media queries, to a string of valid CSS. styled-inline-additions also provides a small amount of error/typo correction (possibly more to come).
 
 Please check out:
 
@@ -10,7 +10,7 @@ Please check out:
 - [Example Demo]() demo corresponding to the example
 - [Documentation](#documentation)
 
-## Motivation
+### Motivation
 
 styled-components is great. A separation between container and presentational components makes great sense. Sometimes, however, you may want a little leeway.
 
@@ -18,11 +18,11 @@ Alternatively, you may not agree with the separation between container and prese
 
 Maybe, you just need to convert styles from a Javascript object to a CSS string, and you don't mind styled-inline-additions' unique syntax.
 
-## Versioning
+### Version
 
-v0.4.0-alpha - not yet production ready, but seems to work; please let me know what you think!
+v0.5.2-alpha - not yet production ready, but seems to work; please let me know what you think!
 
-## Getting Started
+### Getting Started
 
 styled-inline-additions looks for two props: 'addString' and 'addObject'.
 
@@ -109,107 +109,7 @@ import inlineAdditions from 'styled-inline-additions';
 var inlineAdditions = require('styled-inline-additions').default;
 ```
 
-## Documentation
-
-- addStyle (string): a string of CSS; you should use normally CSS syntax and, you may include anything you would normally include in a styled-component string, except for props (support for props may be added in the future)
-
-- addObject (object): styled-inline-additions follows regular inline style (camel case) syntax and also provides a unique syntax to parse html, pseudo-classes, pseudo-elements, and media queries;
-
-  - add (array or string): include an 'add' key, with an array or string value, to add additional styling;
-
-    - Rules:
-      1. arrays may include nested objects;
-      2. please keep in mind commas ',' and colons ':' contained in an array, nested object in an array, or a string, are counted as reserved characters:
-
-
-    ```JSX
-    <StyledDiv
-      addObject={{
-        backgroundColor: '#9B6FCC',
-        p: {
-          add: '> div > a',
-          alignSelf: 'center',
-          hover: {
-            backgroundColor: 'green';
-          },
-        },
-        media: {
-          add: ['print', 'screen&', { maxWidth: '750px' }],
-          width: '100%',
-        },
-      }}
-    />
-
-    // output:
-    // `backgroundColor: #9B6FCC
-    // p > div > a {
-    // align-self: center;
-    // &:hover {
-    // background-color: green;
-    // }
-    // }
-    // @media print, screen and (max-width: 750px) {
-    // width: 100%;
-    // }
-    // `
-    ```
-
-    - Reserved Characters: styled-inline-additions looks for certain reserved characters when parsing the "add" prop;
-
-      - Rules:
-        1. only reserved characters and [A-Za-z0-9] characters will be parsed; all other characters will be removed;
-        2. if a string of consecutive reserved characters is provided, only the first and last reserved character will be parsed ("&|>>|" would be parsed as "&|");
-        3. the first relevant character (searching from left to right) of two consecutive characters will be used (if both '&' and '|' are relevant, '&' will be used) and the other character ignored;
-        4. if both characters are irrelevant, both will be ignored;
-
-
-      - [ ] : spaces between two or more [A-Za-z0-9] characters or words will be kept; all other occurances of the space character will be removed;
-
-      - [-] : dashes can be used when needed; pseudo-classes, pseudo-elements, media types, and media features should all be provided in camel case, without dashes
-
-      - [,] : commas can be used as selectors ('p, div'); or, as logical operators for media queries ('print, screen');
-
-      - [>] : greater-than signs can be used as selectors ('p > div');
-
-      - [\_] : underscores can be used as a space selector ('body_p,div' will be parsed as 'body p, div)
-
-      - [+] : plus signs can be used as selectors ('p + div');
-
-      - [~] : tildes can be used as selectors ('p ~ div');
-
-      - [&] : ampersands can be used as logical operators for media queries ('print & screen' will be parsed as 'print and screen')
-
-      - [|] : vertical bars can be used as logical operators for media queries ('print | screen' will be parsed as 'print, screen')
-
-      - [!] : exclamation marks can be used as logical operators for media queries ('!print' will be parsed as 'not print')
-
-      - [?] : question marks can be used as logical operators for media queries ('?print' will be parsed as 'only print')
-
-      - [:] : colons can be used to join html, pseudo-classes, and pseudo-elements ('a:focus:firstLine' will be parsed as 'a:focus::first-line'); or, with media features ('maxWidth:750px' will be parsed as '(max-width: 750px)')
-
-      - [%] : percentage signs can be used to identify parameters, for pseudo-classes or pseudo-elements:
-
-
-        ```JSX
-        <StyledDiv
-          addObject={{
-            backgroundColor: '#9B6FCC',
-            not: {
-              add: ["%p", "%div", "nthChild %", "2n"],
-              alignSelf: 'center',
-            },
-          }}
-        />
-
-        // output:
-        // `backgroundColor: #9B6FCC
-        // :not(p, div), nth-child(2n) {
-        // align-self: center;
-        // }
-        // `
-        ```
-
-## Example
+### Example
 
 Please find a more complex example with a demo below.
 
@@ -275,6 +175,106 @@ const PageGrid = props => {
 // `
 ```
 
-## License
+## Documentation
+
+- addStyle (string): a string of CSS; you should use normally CSS syntax and, you may include anything you would normally include in a styled-component string, except for props (support for props may be added in the future)
+
+- addObject (object): styled-inline-additions follows regular inline style (camel case) syntax and also provides a unique syntax to parse html, pseudo-classes, pseudo-elements, and media queries;
+
+  - add (array or string): include an 'add' key, with an array or string value, to add additional styling;
+
+    - Rules:
+      1. arrays may include nested objects;
+      2. please keep in mind commas ',' and colons ':' contained in an array, nested object in an array, or a string, are counted as reserved characters:
+
+
+    ```JSX
+    <StyledDiv
+      addObject={{
+        backgroundColor: '#9B6FCC',
+        p: {
+          add: '> div > a',
+          alignSelf: 'center',
+          hover: {
+            backgroundColor: 'green';
+          },
+        },
+        media: {
+          add: ['print', 'screen&', { maxWidth: '750px' }],
+          width: '100%',
+        },
+      }}
+    />
+
+    // output:
+    // `backgroundColor: #9B6FCC
+    // p > div > a {
+    // align-self: center;
+    // &:hover {
+    // background-color: green;
+    // }
+    // }
+    // @media print, screen and (max-width: 750px) {
+    // width: 100%;
+    // }
+    // `
+    ```
+
+    - Reserved Characters: styled-inline-additions looks for certain reserved characters when parsing the "add" prop;
+
+      - Rules:
+        1. only reserved characters and [A-Za-z0-9] characters will be parsed; all other characters will be removed;
+        2. if a string of consecutive reserved characters is provided, only the first and last reserved character will be parsed ("&|>>|" would be parsed as "&|");
+        3. the first relevant character (searching from left to right) of two consecutive characters will be used (if both '&' and '|' are relevant, '&' will be used) and the other character ignored;
+        4. if both characters are irrelevant, both will be ignored;
+
+
+      - spaces between two or more [A-Za-z0-9] characters or words will be kept; all other occurances of the space character will be removed;
+
+      - [ - ] : dashes can be used when needed; pseudo-classes, pseudo-elements, media types, and media features should all be provided in camel case, without dashes
+
+      - [ , ] : commas can be used as selectors ('p, div'); or, as logical operators for media queries ('print, screen');
+
+      - [ > ] : greater-than signs can be used as selectors ('p > div');
+
+      - [ \ _] : underscores can be used as a space selector ('body_p,div' will be parsed as 'body p, div)
+
+      - [ + ] : plus signs can be used as selectors ('p + div');
+
+      - [ ~ ] : tildes can be used as selectors ('p ~ div');
+
+      - [ & ] : ampersands can be used as logical operators for media queries ('print & screen' will be parsed as 'print and screen')
+
+      - [ | ] : vertical bars can be used as logical operators for media queries ('print | screen' will be parsed as 'print, screen')
+
+      - [ ! ] : exclamation marks can be used as logical operators for media queries ('!print' will be parsed as 'not print')
+
+      - [ ? ] : question marks can be used as logical operators for media queries ('?print' will be parsed as 'only print')
+
+      - [ : ] : colons can be used to join html, pseudo-classes, and pseudo-elements ('a:focus:firstLine' will be parsed as 'a:focus::first-line'); or, with media features ('maxWidth:750px' will be parsed as '(max-width: 750px)')
+
+      - [ % ] : percentage signs can be used to identify parameters, for pseudo-classes or pseudo-elements:
+
+
+        ```JSX
+        <StyledDiv
+          addObject={{
+            backgroundColor: '#9B6FCC',
+            not: {
+              add: ["%p", "%div", "nthChild %", "2n"],
+              alignSelf: 'center',
+            },
+          }}
+        />
+
+        // output:
+        // `backgroundColor: #9B6FCC
+        // :not(p, div), nth-child(2n) {
+        // align-self: center;
+        // }
+        // `
+        ```
+
+### License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
