@@ -60,7 +60,9 @@ const PageGrid = props => {
     align-self: 'center';
   `;
 
-  // you can also add background-color using an object
+  // you can also add background-color using inline styles
+  // and styled-inline-additions unique syntax for selectors,
+  // pseudo-classes, pseudo-elements, and media queries
   const addObject = {
     backgroundColor: '#9B6FCC',
   };
@@ -79,8 +81,7 @@ const PageGrid = props => {
   );
 };
 
-// inline additions will add the following string
-// to your FlexColumn styled-component:
+// inlineAdditions will output:
 // `align-self: center;
 // background-color: #9B6FCC;
 // `
@@ -95,14 +96,16 @@ styled-inline-additions was built for and tested with React. It has no dependenc
 Install styled-inline-additions as a dependency:
 
 ```console
-npm i styled-inline-additions
+npm i -S styled-inline-additions
 ```
 
 Import the styled-inline-additions module:
 
 ```javascript
 import inlineAdditions from 'styled-inline-additions';
+
 /*--- or ---*/
+
 var inlineAdditions = require('styled-inline-additions').default;
 ```
 
@@ -112,12 +115,12 @@ var inlineAdditions = require('styled-inline-additions').default;
 
 - addObject (object): styled-inline-additions follows regular inline style (camel case) syntax and also provides a unique syntax to parse html, pseudo-classes, pseudo-elements, and media queries;
 
-  - add (array or string): include an 'add' key, with an array or string value,to add additional styling;
+  - add (array or string): include an 'add' key, with an array or string value, to add additional styling;
 
     - Rules:
-
       1. arrays may include nested objects;
       2. please keep in mind commas ',' and colons ':' contained in an array, nested object in an array, or a string, are counted as reserved characters:
+
 
     ```JSX
     <StyledDiv
@@ -135,7 +138,7 @@ var inlineAdditions = require('styled-inline-additions').default;
           width: '100%',
         },
       }}
-    >
+    />
 
     // Output:
     // `backgroundColor: #9B6FCC
@@ -154,43 +157,37 @@ var inlineAdditions = require('styled-inline-additions').default;
     - Reserved Characters: styled-inline-additions looks for certain reserved characters when parsing the "add" prop;
 
       - Rules:
-
         1. only reserved characters and [A-Za-z0-9] characters will be parsed; all other characters will be removed;
         2. if a string of consecutive reserved characters is provided, only the first and last reserved character will be parsed ("&|>>|" would be parsed as "&|");
         3. the first relevant character (searching from left to right) of two consecutive characters will be used (if both '&' and '|' are relevant, '&' will be used) and the other character ignored;
         4. if both characters are irrelevant, both will be ignored;
 
-      - ' ': spaces between two or more [A-Za-z0-9] characters or words will be kept; all other occurances of the space character will be removed;
 
-      - '-': dashes can be used when needed; pseudo-classes, pseudo-elements, media types, and media features should all be provided in camel case, without dashes
+      - [ ] : spaces between two or more [A-Za-z0-9] characters or words will be kept; all other occurances of the space character will be removed;
 
-      - ',':
+      - [-] : dashes can be used when needed; pseudo-classes, pseudo-elements, media types, and media features should all be provided in camel case, without dashes
 
-        1. commas can be used as selectors ('p, div'); or,
-        2. as logical operators for media queries ('print, screen');
+      - [,] : commas can be used as selectors ('p, div'); or, as logical operators for media queries ('print, screen');
 
-      - '>': greater-than signs can be used as selectors ('p > div');
+      - [>] : greater-than signs can be used as selectors ('p > div');
 
-      - '\_': underscores can be used as a space selector ('body_p,div' will be parsed as 'body p, div)
+      - [\_] : underscores can be used as a space selector ('body_p,div' will be parsed as 'body p, div)
 
-      - '+': plus signs can be used as selectors ('p + div');
+      - [+] : plus signs can be used as selectors ('p + div');
 
-      - '~': tildes can be used as selectors ('p ~ div');
+      - [~] : tildes can be used as selectors ('p ~ div');
 
-      - '&': ampersands can be used as logical operators for media queries ('print & screen' will be parsed as 'print and screen')
+      - [&] : ampersands can be used as logical operators for media queries ('print & screen' will be parsed as 'print and screen')
 
-      - '&': vertical bars can be used as logical operators for media queries ('print | screen' will be parsed as 'print, screen')
+      - [|] : vertical bars can be used as logical operators for media queries ('print | screen' will be parsed as 'print, screen')
 
-      - '!': exclamation marks can be used as logical operators for media queries ('!print' will be parsed as 'not print')
+      - [!] : exclamation marks can be used as logical operators for media queries ('!print' will be parsed as 'not print')
 
-      - '?': question marks can be used as logical operators for media queries ('?print' will be parsed as 'only print')
+      - [?] : question marks can be used as logical operators for media queries ('?print' will be parsed as 'only print')
 
-      - ':':
+      - [:] : colons can be used to join html, pseudo-classes, and pseudo-elements ('a:focus:firstLine' will be parsed as 'a:focus::first-line'); or, with media features ('maxWidth:750px' will be parsed as '(max-width: 750px)')
 
-        1. colons can be used with to join html, pseudo-classes, and pseudo-elements ('a:focus:firstLine' will be parsed as 'a:focus::first-line'); or,
-        2. with media features ('maxWidth:750px' will be parsed as '(max-width: 750px)')
-
-      - '%': percentage signs can be used to identify parameters, for pseudo-classes or pseudo-elements:
+      - [%] : percentage signs can be used to identify parameters, for pseudo-classes or pseudo-elements:
 
         ```JSX
         <StyledDiv
@@ -201,7 +198,7 @@ var inlineAdditions = require('styled-inline-additions').default;
               alignSelf: 'center',
             },
           }}
-        >
+        />
 
         // Output:
         // `backgroundColor: #9B6FCC
@@ -265,8 +262,7 @@ const PageGrid = props => {
   );
 };
 
-// inline additions will add the following string
-// to your FlexColumn styled-component:
+// inlineAdditions will output:
 // `background-color: #9B6FCC;
 // align-self: center;
 // div:nth-of-type(2n), div:hover {
