@@ -140,7 +140,7 @@ var inlineAdditions = require('styled-inline-additions').default;
       }}
     />
 
-    // Output:
+    // output:
     // `backgroundColor: #9B6FCC
     // p > div > a {
     // align-self: center;
@@ -189,6 +189,7 @@ var inlineAdditions = require('styled-inline-additions').default;
 
       - [%] : percentage signs can be used to identify parameters, for pseudo-classes or pseudo-elements:
 
+
         ```JSX
         <StyledDiv
           addObject={{
@@ -200,7 +201,7 @@ var inlineAdditions = require('styled-inline-additions').default;
           }}
         />
 
-        // Output:
+        // output:
         // `backgroundColor: #9B6FCC
         // :not(p, div), nth-child(2n) {
         // align-self: center;
