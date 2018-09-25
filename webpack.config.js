@@ -12,12 +12,13 @@ const nodeModDir = path.resolve(__dirname, 'node_modules');
 
 const config = {
   entry: {
-    bundle: path.resolve(srcDir, 'inlineAdditions.jsx'),
+    bundle: path.resolve(srcDir, 'inlineAdditions.js'),
   },
   output: {
     path: binDir,
-    filename: 'inlineAdditions.min.js',
-    publicPath: '/',
+    filename: 'styled-inline-additions.min.js',
+    libraryTarget: 'umd',
+    library: 'default',
   },
   resolve: {
     modules: [rootDir, nodeModDir],

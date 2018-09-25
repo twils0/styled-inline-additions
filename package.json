@@ -1,18 +1,19 @@
 {
   "name": "styled-inline-additions",
-  "version": "v0.5.3-alpha",
-  "description": "styled-components helper that converts a Javascript object of inline styles into a string of valid CSS",
+  "version": "v0.5.4-alpha",
+  "description": "styled-components helper that converts an object of inline styles into a string of valid CSS",
   "license": "Apache-2.0",
   "author": "twils0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/twils0/styled-inline-additions.git"
+    "url": "https://github.com/twils0/styled-inline-additions"
   },
   "bugs": {
-    "url": "https://github.com/twils0/styled-inline-additions.git/issues"
+    "url": "https://github.com/twils0/styled-inline-additions/issues"
   },
-  "homepage": "https://github.com/twils0/styled-inline-additions.git#readme",
-  "main": "bin/inlineAdditions.min.jsx",
+  "homepage": "https://github.com/twils0/styled-inline-additions#readme",
+  "main": "bin/styled-inline-additions.min.js",
+  "module": "bin/styled-inline-additions.min.js",
   "scripts": {
     "webpack": "webpack --progress --colors --mode production",
     "dev": "webpack-dev-server --mode development --open",

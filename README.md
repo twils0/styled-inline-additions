@@ -1,8 +1,6 @@
 # styled-inline-additions
 
-styled-inline-additions is extremely fast and light-weight (no dependencies; 15.9 KB minified; 4.3 KB minified + gzipped) module that converts a Javascript object of inline styles, with a few unique syntax additions to accomodate selectors, pseudo-classes, pseudo-elements, and media queries, to a string of valid CSS. styled-inline-additions also provides a small amount of error/typo correction (possibly more to come).
-
-Please check out:
+styled-inline-additions is an extremely fast and light-weight (no dependencies; ~16.2 KB minified; ~4.4 KB minified + gzipped) module that converts an object of inline styles, with a few unique syntax additions to accomodate selectors, pseudo-classes, pseudo-elements, and media queries, to a string of valid CSS. styled-inline-additions also provides a small amount of error/typo correction (possibly more to come).
 
 - [Performance Demo]() demo to showcase performance;
 - [Getting Started](#getting-started) for a basic example;
@@ -17,10 +15,6 @@ styled-components is great. A separation between container and presentational co
 Alternatively, you may not agree with the separation between container and presentational components at all. You may simply want a way to add pseudo-classes, pseudo-elements, and media queries to your inline styles using Javascript (and you don't want to use Radium or any another CSS-in-JS option).
 
 Maybe, you just need to convert styles from a Javascript object to a CSS string, and you don't mind styled-inline-additions' unique syntax.
-
-### Version
-
-v0.5.2-alpha - not yet production ready, but seems to work; please let me know what you think!
 
 ### Getting Started
 
@@ -111,9 +105,9 @@ var inlineAdditions = require('styled-inline-additions').default;
 
 ### Example
 
-Please find a more complex example with a demo below.
+[Example Demo]()
 
-Please refer to the [Documentation](#documentation) to become familiar with the 'add' prop and reserved characters. Only reserved characters and [A-Za-z0-9] characters will be parsed; all other characters will be removed.
+Please refer to the [Documentation](#documentation) for details on the 'add' prop and reserved characters. Only reserved characters and [A-Za-z0-9] characters will be parsed; all other characters will be removed.
 
 ```JSX
 import styled from 'styled-components';
