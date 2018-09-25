@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1537876116223" clover="3.2.0">
-  <project timestamp="1537876116223" name="All files">
+<coverage generated="1537876970310" clover="3.2.0">
+  <project timestamp="1537876970311" name="All files">
     <metrics statements="336" coveredstatements="329" conditionals="299" coveredconditionals="286" methods="9" coveredmethods="9" elements="644" coveredelements="624" complexity="0" loc="336" ncloc="336" packages="2" files="10" classes="10">
       <package name="src">
         <metrics statements="326" coveredstatements="319" conditionals="299" coveredconditionals="286" methods="9" coveredmethods="9"/>
         <file name="camelToDash.js" path="/home/tyler/Projects/styled-inline-additions/src/camelToDash.js">
           <metrics statements="4" coveredstatements="4" conditionals="6" coveredconditionals="6" methods="2" coveredmethods="2"/>
           <line num="3" count="1" type="stmt"/>
-          <line num="4" count="174" type="cond" truecount="2" falsecount="0"/>
-          <line num="6" count="174" type="stmt"/>
+          <line num="4" count="175" type="cond" truecount="2" falsecount="0"/>
+          <line num="6" count="175" type="stmt"/>
           <line num="8" count="78" type="cond" truecount="2" falsecount="0"/>
         </file>
         <file name="handleAdd.js" path="/home/tyler/Projects/styled-inline-additions/src/handleAdd.js">
@@ -266,11 +266,11 @@
           <line num="15" count="66" type="stmt"/>
           <line num="17" count="66" type="cond" truecount="5" falsecount="0"/>
           <line num="18" count="64" type="stmt"/>
-          <line num="19" count="191" type="stmt"/>
-          <line num="20" count="191" type="stmt"/>
-          <line num="21" count="191" type="stmt"/>
-          <line num="23" count="191" type="cond" truecount="2" falsecount="0"/>
-          <line num="26" count="133" type="cond" truecount="2" falsecount="0"/>
+          <line num="19" count="192" type="stmt"/>
+          <line num="20" count="192" type="stmt"/>
+          <line num="21" count="192" type="stmt"/>
+          <line num="23" count="192" type="cond" truecount="2" falsecount="0"/>
+          <line num="26" count="134" type="cond" truecount="2" falsecount="0"/>
           <line num="29" count="25" type="stmt"/>
           <line num="34" count="25" type="cond" truecount="2" falsecount="0"/>
           <line num="35" count="16" type="stmt"/>
@@ -280,9 +280,9 @@
           <line num="41" count="6" type="stmt"/>
           <line num="43" count="25" type="cond" truecount="2" falsecount="0"/>
           <line num="44" count="5" type="stmt"/>
-          <line num="47" count="108" type="stmt"/>
-          <line num="48" count="108" type="stmt"/>
-          <line num="50" count="108" type="stmt"/>
+          <line num="47" count="109" type="stmt"/>
+          <line num="48" count="109" type="stmt"/>
+          <line num="50" count="109" type="stmt"/>
           <line num="52" count="58" type="cond" truecount="2" falsecount="0"/>
           <line num="64" count="56" type="cond" truecount="4" falsecount="0"/>
           <line num="65" count="43" type="cond" truecount="9" falsecount="0"/>
@@ -337,13 +337,13 @@
         <file name="stringifyCategory.js" path="/home/tyler/Projects/styled-inline-additions/src/stringifyCategory.js">
           <metrics statements="8" coveredstatements="8" conditionals="8" coveredconditionals="8" methods="1" coveredmethods="1"/>
           <line num="2" count="1" type="stmt"/>
-          <line num="3" count="174" type="cond" truecount="8" falsecount="0"/>
+          <line num="3" count="175" type="cond" truecount="8" falsecount="0"/>
           <line num="5" count="8" type="stmt"/>
           <line num="8" count="27" type="stmt"/>
           <line num="11" count="5" type="stmt"/>
           <line num="16" count="2" type="stmt"/>
           <line num="18" count="6" type="stmt"/>
-          <line num="20" count="126" type="stmt"/>
+          <line num="20" count="127" type="stmt"/>
         </file>
       </package>
       <package name="src.Categories">

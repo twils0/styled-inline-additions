@@ -2,10 +2,10 @@
 
 styled-inline-additions is an extremely fast and light-weight (no dependencies; ~16.2 KB minified; ~4.4 KB minified + gzipped) module that converts an object of inline styles, with a few unique syntax additions to accomodate selectors, pseudo-classes, pseudo-elements, and media queries, to a string of valid CSS. styled-inline-additions also provides a small amount of error/typo correction (possibly more to come).
 
-- [Performance Demo]() demo to showcase performance;
+- [Performance Demo](https://codesandbox.io/s/v6nx2nx11l) demo to showcase performance;
 - [Getting Started](#getting-started) for a basic example;
 - [Example](#example) for a more complex example; and,
-- [Example Demo]() demo corresponding to the example
+- [Example Demo](https://codesandbox.io/s/9pp5164ny) demo corresponding to the example
 - [Documentation](#documentation)
 
 ### Motivation
@@ -100,7 +100,7 @@ var inlineAdditions = require('styled-inline-additions').default;
 
 ### Example
 
-[Example Demo]()
+[Example Demo](https://codesandbox.io/s/9pp5164ny)
 
 Please refer to the [Documentation](#documentation) for details on the 'add' prop and reserved characters. Only reserved characters and [A-Za-z0-9] characters will be parsed; all other characters will be removed.
 

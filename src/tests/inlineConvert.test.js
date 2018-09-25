@@ -40,12 +40,14 @@ describe('inlineConvert', () => {
       testNum: 1,
       p: {
         alignItems: 'center',
+        background: '#ccc',
       },
     };
     const expectedString = `background: green;
 justify-content: flex-end;
 p {
 align-items: center;
+background: #ccc;
 }
 `;
 

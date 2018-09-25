@@ -45,7 +45,7 @@ const inlineConvert = (styles, paramNeeded) => {
           }
         } else {
           const formattedKey = stringifyCategory(category, camelToDash(cleanedKey));
-          const cleanedStyle = style.replace(/[^A-Za-z0-9- ]/g, '');
+          const cleanedStyle = style.replace(/[^A-Za-z0-9- #]/g, '');
 
           returnStyleString += `${formattedKey}: ${cleanedStyle};\n`;
         }

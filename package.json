@@ -1,10 +1,17 @@
 {
   "name": "styled-inline-additions",
-  "version": "v0.5.4-alpha",
+  "version": "v0.5.5-alpha",
   "description": "styled-components helper that converts an object of inline styles into a string of valid CSS",
   "license": "Apache-2.0",
   "author": "twils0",
-  "keywords": ["styled-components", "inline", "styles", "css", "react", "reactjs"],
+  "keywords": [
+    "styled-components",
+    "inline",
+    "styles",
+    "css",
+    "react",
+    "reactjs"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/twils0/styled-inline-additions"
