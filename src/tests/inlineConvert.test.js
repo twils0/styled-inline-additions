@@ -73,6 +73,7 @@ background: #ccc;
         add: ',div>|,.button,> select',
         flex: '1 1',
         fontSize: '15px',
+        background: '#ccc',
       },
     };
     const expectedString = `background: green;
@@ -80,6 +81,7 @@ justify-content: flex-end;
 a, div > button, select {
 flex: 1 1;
 font-size: 15px;
+background: #ccc;
 }
 `;
 
