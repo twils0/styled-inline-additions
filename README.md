@@ -1,6 +1,6 @@
 # styled-inline-additions
 
-styled-inline-additions is an extremely fast and light-weight (no dependencies; ~16.2 KB minified; ~4.4 KB minified + gzipped) module that converts an object of inline styles, with a few unique syntax additions to accomodate selectors, pseudo-classes, pseudo-elements, and media queries, to a string of valid CSS. styled-inline-additions also provides a small amount of error/typo correction (possibly more to come).
+styled-inline-additions is an extremely fast and light-weight (no dependencies; ~16.2 KB minified; ~4.4 KB minified + gzipped) module that converts an object of inline styles, with a few unique syntax additions to accommodate selectors, pseudo-classes, pseudo-elements, and media queries, to a string of valid CSS. styled-inline-additions also provides a small amount of error/typo correction (possibly more to come).
 
 - [Performance Demo](https://codesandbox.io/s/v6nx2nx11l) demo to showcase performance;
 - [Getting Started](#getting-started) for a basic example;
@@ -41,11 +41,11 @@ const FlexColumn = styled.div`
 
   ${inlineAdditions};
 `;
-// why add 'align-self: ${({ alignSelf }) => alignSelf};' and
-// 'background-color: ${props => props.backgroundColor};'
-// to the styled-component above just to use align-self
-// and background-color one time?
-
+/* why add 'align-self: ${({ alignSelf }) => alignSelf};' and
+  'background-color: ${props => props.backgroundColor};'
+  to the styled-component above just to use align-self
+  and background-color one time?
+*/
 const PageGrid = props => {
   // instead why not add align-self, or any other CSS
   // just as you would normally, except you can't use
@@ -70,10 +70,11 @@ const PageGrid = props => {
   );
 };
 
-// inlineAdditions will output:
-// `align-self: center;
-// background-color: #9B6FCC;
-// `
+/* inlineAdditions will output:
+  `align-self: center;
+  background-color: #9B6FCC;
+  `
+*/
 ```
 
 ### Prerequisites
@@ -121,47 +122,44 @@ const FlexColumn = styled.div`
   width: ${({ width }) => width};
   height: ${({ height }) => height};
 
-  ${inlineAdditions}
+  ${inlineAdditions};
 `;
 
 const PageGrid = props => {
   const addObject = {
     backgroundColor: '#9B6FCC',
-    alignSelf: 'center'
-    div: {
-      add: 'nthOfType   %    2n, div:%^$%^>> hover  '
-      backgroundColor: 'green';
+    lastChild: {
+      hover: {
+        backgroundColor: 'lightgreen',
+      },
     },
     media: {
-      add: ['screen    &  ', 'minWidth:', '250px()()()', { maxWidth: '750px' }],
-      alignSelf: 'flex-start',
+      add: ['screen   &>^$%^>>  ', 'minWidth:', '700px()()() &', { maxWidth: '1000px' }],
+      backgroundColor: 'lightblue',
     },
   };
 
   return (
     <FlexRow width="100%" height="100%">
-      <FlexColumn
-        addString={addString}
-        addObject={addObject}
-        width="50%"
-        height="50%"
-      >
+      <FlexColumn addObject={addObject} width="50%" height="50%">
         <h2> Test Column </h2>
       </FlexColumn>
     </FlexRow>
   );
 };
 
-// inlineAdditions will output:
-// `background-color: #9B6FCC;
-// align-self: center;
-// div:nth-of-type(2n), div:hover {
-// background-color: green;
-// }
-// @media screen and (min-width: 250px) and (max-width: 750px) {
-// align-self: flex-start;
-// }
-// `
+/* inlineAdditions will output:
+  `background-color: #9B6FCC;
+  &:last-child {
+  &:hover {
+  background-color: lightgreen;
+  }
+  }
+  @media screen and (min-width: 700px) and (max-width: 1000px) {
+  background-color: lightblue;
+  }
+  `
+*/
 ```
 
 ## Documentation
@@ -195,18 +193,19 @@ const PageGrid = props => {
       }}
     />
 
-    // output:
-    // `backgroundColor: #9B6FCC
-    // p > div > a {
-    // align-self: center;
-    // &:hover {
-    // background-color: green;
-    // }
-    // }
-    // @media print, screen and (max-width: 750px) {
-    // width: 100%;
-    // }
-    // `
+    /* output:
+      `backgroundColor: #9B6FCC
+      p > div > a {
+      align-self: center;
+      &:hover {
+      background-color: green;
+      }
+      }
+      @media print, screen and (max-width: 750px) {
+      width: 100%;
+      }
+      `
+    */
     ```
 
     - Reserved Characters: styled-inline-additions looks for certain reserved characters when parsing the "add" prop;
@@ -256,12 +255,13 @@ const PageGrid = props => {
           }}
         />
 
-        // output:
-        // `backgroundColor: #9B6FCC
-        // :not(p, div), nth-child(2n) {
-        // align-self: center;
-        // }
-        // `
+        /* output:
+          `backgroundColor: #9B6FCC
+          :not(p, div), nth-child(2n) {
+          align-self: center;
+          }
+          `
+        */
         ```
 
 ### License
