@@ -1,5 +1,7 @@
 import inlineConvert from './inlineConvert';
 
+// inlineAdditions should be placed inside a styled-component string;
+// it looks for the addString or addObject props and returns a css string
 const inlineAdditions = ({ addString, addObject }) => {
   let finalStyleString = '';
 
@@ -17,6 +19,8 @@ const inlineAdditions = ({ addString, addObject }) => {
       finalStyleString += `\n${styleString}\n`;
 
       if (failedStyles.length > 0) {
+        // failed styles will be listed in the console as an array;
+        // non-reserved characters that have been filtered out will not show up here
         console.error(
           'styled-inline-additions: the following styles were not understood and ignored: \n',
           failedStyles,

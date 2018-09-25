@@ -5,6 +5,9 @@ export const mediaTypes = {
   speech: 'mediaType',
 };
 
+// any media feature that is used elsewhere should be prefixed
+// with 'media'; for instance, 'hover' becomes 'mediaHover'
+// this prefix is then filtered out by camelToDash function
 export const mediaFeatures = {
   width: 'mediaFeature',
   minWidth: 'mediaFeature',
@@ -41,6 +44,8 @@ export const mediaFeatures = {
   deviceAspectRatio: 'mediaFeature',
 };
 
-export const mediaFeaturesExceptions = {
+// media features that can also be an expr;
+// for instance, (hover: hover)
+export const mediaFeatureExceptions = {
   mediaHover: 'mediaFeature',
 };

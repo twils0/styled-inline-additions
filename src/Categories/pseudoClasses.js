@@ -39,6 +39,7 @@ export const pseudoClasses = {
   visited: 'pseudoClass',
 };
 
+// pseudo classes that have parameters
 export const pseudoClassesParam = {
   dir: 'pseudoClassParam',
   host: 'pseudoClassParam',

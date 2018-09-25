@@ -22,7 +22,7 @@ styled-inline-additions looks for two props: 'addString' and 'addObject'.
 
 It's as easy as:
 
-```JSX
+```javascript
 import styled from 'styled-components';
 import inlineAdditions from 'styled-inline-additions';
 
@@ -39,7 +39,7 @@ const FlexColumn = styled.div`
   width: ${({ width }) => width};
   height: ${({ height }) => height};
 
-  ${inlineAdditions}
+  ${inlineAdditions};
 `;
 // why add 'align-self: ${({ alignSelf }) => alignSelf};' and
 // 'background-color: ${props => props.backgroundColor};'
@@ -63,12 +63,7 @@ const PageGrid = props => {
 
   return (
     <FlexRow width="100%" height="100%">
-      <FlexColumn
-        addString={addString}
-        addObject={addObject}
-        width="50%"
-        height="50%"
-      >
+      <FlexColumn addString={addString} addObject={addObject} width="50%" height="50%">
         <h2> Test Column </h2>
       </FlexColumn>
     </FlexRow>
@@ -109,7 +104,7 @@ var inlineAdditions = require('styled-inline-additions').default;
 
 Please refer to the [Documentation](#documentation) for details on the 'add' prop and reserved characters. Only reserved characters and [A-Za-z0-9] characters will be parsed; all other characters will be removed.
 
-```JSX
+```javascript
 import styled from 'styled-components';
 import inlineAdditions from 'styled-inline-additions';
 
@@ -182,7 +177,7 @@ const PageGrid = props => {
       2. please keep in mind commas ',' and colons ':' contained in an array, nested object in an array, or a string, are counted as reserved characters:
 
 
-    ```JSX
+    ```javascript
     <StyledDiv
       addObject={{
         backgroundColor: '#9B6FCC',
@@ -225,7 +220,7 @@ const PageGrid = props => {
 
       - spaces between two or more [A-Za-z0-9] characters or words will be kept; all other occurances of the space character will be removed;
 
-      - [ - ] : dashes can be used when needed; pseudo-classes, pseudo-elements, media types, and media features should all be provided in camel case, without dashes
+      - [ - ] : dashes can be used when needed; pseudo-classes, pseudo-elements, media types and, media features should all be provided in camel case, without dashes
 
       - [ , ] : commas can be used as selectors ('p, div'); or, as logical operators for media queries ('print, screen');
 
@@ -250,7 +245,7 @@ const PageGrid = props => {
       - [ % ] : percentage signs can be used to identify parameters, for pseudo-classes or pseudo-elements:
 
 
-        ```JSX
+        ```javascript
         <StyledDiv
           addObject={{
             backgroundColor: '#9B6FCC',

@@ -12,10 +12,12 @@ export const pseudoElements = {
   spellingError: 'pseudoElement',
 };
 
+// pseudo elements that have parameters
 export const pseudoElementsParam = {
   slotted: 'pseudoElementParam',
 };
 
+// pseudo elements starting with a dash
 export const pseudoElementsDash = {
   mozProgressBar: 'pseudoElementDash',
   mozRangeProgress: 'pseudoElementDash',

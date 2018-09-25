@@ -4,6 +4,9 @@ import handleAdd from './handleAdd';
 
 import cssCategories from './Categories/categories';
 
+// inlineConvert recursively iterates through an object provided
+// by 'addObject'; it ultimately returns a 'styleString' and 'failedStyles'
+// array to inlineAdditions
 const inlineConvert = (styles, paramNeeded) => {
   let returnStyleString = '';
   let returnHtmlPseudoString = '';
@@ -18,6 +21,8 @@ const inlineConvert = (styles, paramNeeded) => {
       const category = cssCategories[cleanedKey];
 
       if (typeof style === 'string') {
+        // add is a prop used to add additional, relevant syntax;
+        // this section handles cases in which a string is provided to add
         if (cleanedKey === 'add') {
           const {
             htmlPseudoString, mediaString, paramString, failedStyles,
@@ -45,6 +50,17 @@ const inlineConvert = (styles, paramNeeded) => {
           returnStyleString += `${formattedKey}: ${cleanedStyle};\n`;
         }
       } else if (typeof style === 'object') {
+        /* object values must have recognized css selector (category) keys;
+          inlineCovert recursively handles all styles contained in the object,
+          placing them inside the selector's declaration block; the selector may
+          receive additional syntax from the add prop
+
+          for example, { div: { add: 'hover', alignItems: 'center' } }
+          - returns -
+          div:hover {
+          align-items: center;
+          }
+        */
         if (style && style.constructor !== Array) {
           switch (category) {
             case 'htmlElement': {
@@ -125,6 +141,9 @@ const inlineConvert = (styles, paramNeeded) => {
               returnFailedStyles.push(cleanedKey);
               break;
           }
+
+          // add is a prop used to add additional, relevant syntax;
+          // this section handles cases in which an array is provided to add
         } else if (cleanedKey === 'add') {
           const {
             htmlPseudoString, mediaString, paramString, failedStyles,

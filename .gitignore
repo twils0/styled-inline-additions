@@ -2,4 +2,3 @@ node_modules/
 bin/
 coverage/
 src/tests/__snapshots__/
-*.tgz
