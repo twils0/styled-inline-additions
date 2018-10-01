@@ -4,6 +4,7 @@ styled-inline-additions is an extremely fast and light-weight (no dependencies; 
 
 - [Performance Demo](https://codesandbox.io/s/v6nx2nx11l) demo to showcase performance;
 - [Getting Started](#getting-started) for a basic example;
+- [Installation](#installation) how to install;
 - [Example](#example) for a more complex example; and,
 - [Example Demo](https://codesandbox.io/s/9pp5164ny) demo corresponding to the example
 - [Documentation](#documentation)
@@ -12,7 +13,7 @@ styled-inline-additions is an extremely fast and light-weight (no dependencies; 
 
 styled-components is great. A separation between container and presentational components makes great sense. Sometimes, however, you may want a little leeway.
 
-Alternatively, you may not agree with the separation between container and presentational components at all. You may simply want a way to add pseudo-classes, pseudo-elements, and media queries to your inline styles using Javascript (and you don't want to use Radium or any another CSS-in-JS option).
+Alternatively, you may not agree with the separation between container and presentational components at all. You may simply want a way to add pseudo-classes, pseudo-elements, and media queries to your inline styles using Javascript (and you don't want to use Radium or any other CSS-in-JS option).
 
 Maybe, you just need to convert styles from a Javascript object to a CSS string, and you don't mind styled-inline-additions' unique syntax.
 
@@ -81,7 +82,7 @@ const PageGrid = props => {
 
 styled-inline-additions was built for and tested with React. It has no dependencies. If you're not using React, but styled-components works for you, there's a good chance styled-inline-additions will work as well.
 
-### Installing
+### Installation
 
 Install styled-inline-additions as a dependency:
 
@@ -166,13 +167,13 @@ const PageGrid = props => {
 
 - addStyle (string): a string of CSS; you should use normally CSS syntax and, you may include anything you would normally include in a styled-component string, except for props (support for props may be added in the future)
 
-- addObject (object): styled-inline-additions follows regular inline style (camel case) syntax and also provides a unique syntax to parse html, pseudo-classes, pseudo-elements, and media queries;
+- addObject (object): styled-inline-additions follows regular inline style (camel case) syntax and also provides a unique syntax to parse html, pseudo-classes, pseudo-elements, and media queries within CSS rulesets;
 
-  - add (array or string): include an 'add' key, with an array or string value, to add additional styling;
+  - add (array or string): include an 'add' key to include additional selectors, to create a group of selectors;
 
     - Rules:
-      1. arrays may include nested objects;
-      2. please keep in mind commas ',' and colons ':' contained in an array, nested object in an array, or a string, are counted as reserved characters:
+      1. arrays may include nested objects or arrays;
+      2. please keep in mind commas ',' and colons ':' contained in an array, a nested object or array, or a string, are counted as reserved characters:
 
 
     ```javascript
@@ -217,9 +218,11 @@ const PageGrid = props => {
         4. if both characters are irrelevant, both will be ignored;
 
 
-      - spaces between two or more [A-Za-z0-9] characters or words will be kept; all other occurances of the space character will be removed;
+      - spaces between two or more [A-Za-z0-9] characters or words within CSS values will be kept; all other occurances of the space character will be removed;
 
-      - [ - ] : dashes can be used when needed; pseudo-classes, pseudo-elements, media types and, media features should all be provided in camel case, without dashes
+      - [ - ] : dashes can be used when needed within CSS values; CSS properties, pseudo-classes, pseudo-elements, media types and, media features should all be provided in camel case, without dashes
+
+      - [ # ] : hashes can be used when needed within CSS values;
 
       - [ , ] : commas can be used as selectors ('p, div'); or, as logical operators for media queries ('print, screen');
 
