@@ -1,6 +1,6 @@
 {
   "name": "styled-inline-additions",
-  "version": "v0.5.10-beta",
+  "version": "v0.5.11-beta",
   "description": "styled-components helper that converts an object of inline styles into a string of valid CSS",
   "license": "Apache-2.0",
   "author": "twils0",
