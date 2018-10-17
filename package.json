@@ -1,6 +1,6 @@
 {
   "name": "styled-inline-additions",
-  "version": "v0.5.9-beta",
+  "version": "v0.5.10-beta",
   "description": "styled-components helper that converts an object of inline styles into a string of valid CSS",
   "license": "Apache-2.0",
   "author": "twils0",
@@ -58,7 +58,6 @@
     "eslint-plugin-babel": "^5.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
-    "eslint-plugin-prettier": "^2.6.2",
     "eslint-plugin-react": "^7.11.1",
     "jest": "^23.5.0",
     "uglifyjs-webpack-plugin": "^1.3.0",

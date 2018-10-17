@@ -60,7 +60,7 @@ const config = {
     ],
   },
   plugins: [
-    new CleanWebpackPlugin(['app/bin']),
+    new CleanWebpackPlugin([binDir]),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.NamedModulesPlugin(),
     new BundleAnalyzerPlugin(),

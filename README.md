@@ -2,11 +2,11 @@
 
 styled-inline-additions is an extremely fast and light-weight (no dependencies; ~16.2 KB minified; ~4.4 KB minified + gzipped) module that converts an object of inline styles, with a few unique syntax additions to accommodate selectors, pseudo-classes, pseudo-elements, and media queries, to a string of valid CSS. styled-inline-additions also provides a small amount of error/typo correction (possibly more to come).
 
-- [Performance Demo](https://codesandbox.io/s/v6nx2nx11l) demo to showcase performance;
-- [Getting Started](#getting-started) for a basic example;
-- [Installation](#installation) how to install;
-- [Example](#example) for a more complex example; and,
-- [Example Demo](https://codesandbox.io/s/9pp5164ny) demo corresponding to the example
+- [Performance Demo](https://codesandbox.io/s/v6nx2nx11l)
+- [Getting Started](#getting-started)
+- [Installation](#installation)
+- [Example](#example)
+- [Example Demo](https://codesandbox.io/s/9pp5164ny)
 - [Documentation](#documentation)
 
 ### Motivation
@@ -269,4 +269,4 @@ const PageGrid = props => {
 
 ### License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the Apache 2.0 License. Please see the [LICENSE](LICENSE) file.

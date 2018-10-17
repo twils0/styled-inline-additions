@@ -4,7 +4,7 @@ import inlineConvert from '../inlineConvert';
 global.console.error = jest.fn();
 jest.mock('../inlineConvert', () => jest.fn());
 
-describe('index', () => {
+describe('inlineAdditions', () => {
   beforeEach(() => {
     global.console.error.mockReset();
     inlineConvert.mockReset();
