@@ -50,7 +50,6 @@ const config = {
       new UglifyJsPlugin({
         cache: true,
         parallel: true,
-        sourceMap: true,
         uglifyOptions: {
           compress: {
             warnings: false,
